@@ -8,25 +8,30 @@
 #ifndef GRID_H
 #define	GRID_H
 
+#include <vector>
+
 #include "Point.h"
 #include "constants.h"
 
 class Grid {
 public:
     
-    enum cell_state { ALIVE, DEAD };
+    enum cell_state { ALIVE=0, DEAD=1 };
+    //const static int ALIVE = 0;
+    //const static int DEAD = 1;
 
-    Grid( cell_state defaultState );
+    Grid();
+    Grid( Grid::cell_state defaultState );
  
    /**
      * Retrieves the value at that particular coordinate within the grid.
      * @param dimen
      * @return 
      */
-    cell_state get(Point dimen);
+    Grid::cell_state get(Point dimen);
     void set(Point dimen, cell_state value);
     
-    void reset( cell_state defaultState );
+    void reset( Grid::cell_state defaultState );
     
     /**
      * Scan through all the cells in the grid that don't
@@ -36,7 +41,7 @@ public:
      */
     grid_dimension getTerrain();
     
-    std::vector< Point > getAllWithState( cell_state val );
+    std::vector< Point > getAllWithState( Grid::cell_state val );
 
 private:
     
@@ -46,7 +51,8 @@ private:
      * actuality, the Grid class should be only storing records of the alive locations
      * and updating those according to function calls.
      */
-    std::map< Point, cell_state > data;
+    std::map< Point, Grid::cell_state > data;
+    Grid::cell_state defaultState;
 
     void init();
 

@@ -8,9 +8,12 @@
 #ifndef COLOR_H
 #define	COLOR_H
 
+#include <string>
+
 class Color {
 public:
 
+    Color();
     Color(int red, int green, int blue);
 
     int getRed();
@@ -26,7 +29,7 @@ private:
     int greenValue;
     int blueValue;
 
-    init();
+    void init();
 
 };
 

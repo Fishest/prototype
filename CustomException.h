@@ -19,7 +19,20 @@ class CustomException : public std::exception {
 public:
 
     enum ErrorCode {
-        INVALID_MAPPING, INVALID_FILE, NULL_PARAMETER
+        INVALID_MAPPING, 
+        INVALID_FILE, 
+        NULL_PARAMETER, 
+        INVALID_FILENAME, 
+        NOT_ENOUGH_BUFFER_FOR_TOKEN, 
+        INVALID_COLOR, 
+        INVALID_POINT, 
+        INVALID_TERRAIN_WINDOW, 
+        INVALID_RANGE /*Refers to the low..high ranges*/,
+        INVALID_COLOR_STRUCT /*Refers to the Colors struct not formatted correctly*/,
+        INVALID_CELL_STATE_FOUND /*During processing, a state was found that isn't currently defined in application*/,
+        PREMATURE_EOF,
+        NO_NEXT_STRUCT
+                
     };
 
     CustomException(ErrorCode errorCode);

@@ -4,7 +4,7 @@ CustomException::CustomException(ErrorCode errorCode) {
     code = errorCode;
 }
 
-virtual const char* CustomException::ErrorMessage() const throw () {
+const char* CustomException::ErrorMessage() const throw () {
 
     if (code == INVALID_MAPPING) {
         std::cerr << "Unable to find mapping to cell state.\n";

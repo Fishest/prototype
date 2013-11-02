@@ -11,19 +11,20 @@ BaseStruct::BaseStruct(StructType type, std::string name){
     this->name = name;
 }
 
-BaseStruct::init(){
-    type = StructType.UNKOWN;
+void BaseStruct::init(){
+    type = BaseStruct::UNKOWN;
     name.clear();
-    data.reset( Grid::cell_state.DEAD );
+    data.reset( Grid::DEAD );
     
     window.xVals.reset();
     window.yVals.reset();
     
     charMap.clear();
     colorMap.clear();
+    
 }
 
-BaseStruct::getChar(Grid::cell_state value){
+int BaseStruct::getChar(Grid::cell_state value){
     
     std::map< Grid::cell_state, int>::iterator it;
     
@@ -33,11 +34,11 @@ BaseStruct::getChar(Grid::cell_state value){
     }
     else{
         //Mapping was not able to be found for the state
-        throw new CustomException( CustomException::ErrorCode.INVALID_MAPPING );
+        throw new CustomException( CustomException::INVALID_MAPPING );
     }
 }
 
-BaseStruct::getColor(Grid::cell_state value){
+Color BaseStruct::getColor(Grid::cell_state value){
     
     std::map< Grid::cell_state, Color>::iterator it;
     
@@ -45,26 +46,39 @@ BaseStruct::getColor(Grid::cell_state value){
     if( it != colorMap.end() )
         return it->second;
     else
-        throw new CustomException( CustomException::ErrorCode.INVALID_MAPPING );
+        throw new CustomException( CustomException::INVALID_MAPPING );
 }
 
-BaseStruct::getGrid(){
+Grid BaseStruct::getGrid(){
     return data;
 }
 
-BaseStruct::getName(){
+std::string BaseStruct::getName(){
     return name;
 }
 
-BaseStruct::getType(){
+void BaseStruct::setName( std::string name ){
+    this->name = name;
+}
+
+BaseStruct::StructType BaseStruct::getType(){
     return type;
 }
 
-BaseStruct::getWindow(){
+grid_dimension BaseStruct::getWindow(){
     return window;
 }
 
-BaseStruct::setChar(Grid::cell_state state, int value){
+grid_dimension BaseStruct::getTerrain(){
+    return terrain;
+}
+    
+void BaseStruct::setTerrain( grid_dimension dimen ){
+    
+    terrain = dimen;
+}
+
+void BaseStruct::setChar(Grid::cell_state state, int value){
     
     std::map< Grid::cell_state, int>::iterator it;
     
@@ -81,7 +95,7 @@ BaseStruct::setChar(Grid::cell_state state, int value){
     }
 }
 
-BaseStruct::setColor(Grid::cell_state state, Color val){
+void BaseStruct::setColor(Grid::cell_state state, Color val){
     
     std::map< Grid::cell_state, Color >::iterator it;
     
@@ -94,18 +108,21 @@ BaseStruct::setColor(Grid::cell_state state, Color val){
     }
 }
 
-BaseStruct::setGrid(Grid update){
-    
-    if( update == NULL )
-        throw new CustomException( CustomException::ErrorCode.NULL_PARAMETER );
-    
+void BaseStruct::setGrid(Grid update){
     this->data = update;
 }
 
-BaseStruct::setWindow(grid_dimension dimen){
-    
-    if( dimen == NULL )
-        throw new CustomException( CustomException::ErrorCode.NULL_PARAMETER );
+void BaseStruct::setWindow(grid_dimension dimen){
     
     this->window = dimen;
+}
+
+void BaseStruct::setColorMap( std::map< Grid::cell_state, Color> map ){
+        
+    colorMap = map;
+}
+
+void BaseStruct::setCharMap( std::map< Grid::cell_state, int > map ){
+ 
+    charMap = map;
 }

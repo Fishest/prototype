@@ -8,6 +8,9 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
+#include "Color.h"
+#include "Point.h"
+
 struct color_case {
     Color alive;
     Color dead;

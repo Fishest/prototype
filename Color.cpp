@@ -1,30 +1,37 @@
+#include <stdio.h>
+
 #include "Color.h"
 
+Color::Color(){
+    redValue = 0;
+    greenValue = 0;
+    blueValue = 0;
+}
 Color::Color(int red, int green, int blue){
     redValue = red;
     greenValue = green;
     blueValue = blue;
 }
 
-Color::init(){
+void Color::init(){
     this->redValue = 0;
     this->greenValue = 0;
     this->blueValue = 0;
 }
 
-Color::getBlue(){
+int Color::getBlue(){
     return blueValue;
 }
 
-Color::getGreen(){
+int Color::getGreen(){
     return greenValue;
 }
 
-Color::getRed(){
+int Color::getRed(){
     return redValue;
 }
 
-Color::toString(){
+std::string Color::toString(){
     
     char temp[100];
     sprintf( temp, "( %d, %d, %d)", redValue, greenValue, blueValue);
