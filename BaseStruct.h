@@ -21,6 +21,8 @@ public:
     enum StructType {
         LIFE, UNKOWN
     };
+
+    BaseStruct( StructType type );
     
     BaseStruct( StructType type, std::string name );
 
@@ -47,8 +49,10 @@ public:
     void setColorMap( std::map< Grid::cell_state, Color> map );
     void setCharMap( std::map< Grid::cell_state, int > map );
     
-
 private:
+    void init();
+
+protected:
 
     StructType type;
     std::string name;
@@ -60,7 +64,6 @@ private:
     std::map< Grid::cell_state, int > charMap;
     std::map< Grid::cell_state, Color > colorMap;    
 
-    void init();
 };
 
 #endif	/* BASESTRUCT_H */

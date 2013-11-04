@@ -31,7 +31,8 @@ public:
         INVALID_COLOR_STRUCT /*Refers to the Colors struct not formatted correctly*/,
         INVALID_CELL_STATE_FOUND /*During processing, a state was found that isn't currently defined in application*/,
         PREMATURE_EOF,
-        NO_NEXT_STRUCT
+        NO_NEXT_STRUCT,
+		NEGATIVE_GENERATIONS
                 
     };
 

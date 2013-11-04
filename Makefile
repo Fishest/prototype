@@ -1,128 +1,53 @@
-#
-#  There exist several targets which are by default empty and which can be 
-#  used for execution of your targets. These targets are usually executed 
-#  before and after some main targets. They are: 
-#
-#     .build-pre:              called before 'build' target
-#     .build-post:             called after 'build' target
-#     .clean-pre:              called before 'clean' target
-#     .clean-post:             called after 'clean' target
-#     .clobber-pre:            called before 'clobber' target
-#     .clobber-post:           called after 'clobber' target
-#     .all-pre:                called before 'all' target
-#     .all-post:               called after 'all' target
-#     .help-pre:               called before 'help' target
-#     .help-post:              called after 'help' target
-#
-#  Targets beginning with '.' are not intended to be called on their own.
-#
-#  Main targets can be executed directly, and they are:
-#  
-#     build                    build a specific configuration
-#     clean                    remove built files from a configuration
-#     clobber                  remove all built files
-#     all                      build all configurations
-#     help                     print help mesage
-#  
-#  Targets .build-impl, .clean-impl, .clobber-impl, .all-impl, and
-#  .help-impl are implemented in nbproject/makefile-impl.mk.
-#
-#  Available make variables:
-#
-#     CND_BASEDIR                base directory for relative paths
-#     CND_DISTDIR                default top distribution directory (build artifacts)
-#     CND_BUILDDIR               default top build directory (object files, ...)
-#     CONF                       name of current configuration
-#     CND_PLATFORM_${CONF}       platform name (current configuration)
-#     CND_ARTIFACT_DIR_${CONF}   directory of build artifact (current configuration)
-#     CND_ARTIFACT_NAME_${CONF}  name of build artifact (current configuration)
-#     CND_ARTIFACT_PATH_${CONF}  path to build artifact (current configuration)
-#     CND_PACKAGE_DIR_${CONF}    directory of package (current configuration)
-#     CND_PACKAGE_NAME_${CONF}   name of package (current configuration)
-#     CND_PACKAGE_PATH_${CONF}   path to package (current configuration)
-#
-# NOCDDL
+CF=-c -ggdb -Wall
 
+OBJECTS=objects/Life.o\
+		objects/BaseStruct.o\
+		objects/Color.o\
+		objects/CustomException.o\
+		objects/FileParser.o\
+		objects/Grid.o\
+		objects/LifeStruct.o\
+		objects/Point.o\
+		objects/Token.o\
+		objects/LifeRuleSet.o
 
-# Environment 
-MKDIR=mkdir
-CP=cp
-CCADMIN=CCadmin
+apps: life
 
+life: $(OBJECTS)
+	g++ -o life $(OBJECTS)
 
-# build
-build: .build-post
+life_gui:
 
-.build-pre:
-# Add your pre 'build' code here...
+objects/Life.o: FileParser.h Point.h LifeRuleSet.h constants.h Life.cpp
+	g++ $(CF) -o objects/Life.o Life.cpp
 
-.build-post: .build-impl
-# Add your post 'build' code here...
+objects/BaseStruct.o: BaseStruct.h CustomException.h BaseStruct.cpp
+	g++ $(CF) -o objects/BaseStruct.o BaseStruct.cpp
 
+objects/Color.o: Color.h Color.cpp
+	g++ $(CF) -o objects/Color.o Color.cpp
 
-# clean
-clean: .clean-post
+objects/CustomException.o: CustomException.h CustomException.cpp
+	g++ $(CF) -o objects/CustomException.o CustomException.cpp
 
-.clean-pre:
-# Add your pre 'clean' code here...
+objects/FileParser.o: Grid.h Point.h CustomException.h FileParser.h LifeStruct.h Token.h FileParser.cpp
+	g++ $(CF) -o objects/FileParser.o FileParser.cpp
 
-.clean-post: .clean-impl
-# Add your post 'clean' code here...
+objects/Grid.o: Grid.h Point.h CustomException.h Grid.cpp
+	g++ $(CF) -o objects/Grid.o Grid.cpp
 
+objects/LifeStruct.o: BaseStruct.h LifeStruct.h LifeStruct.cpp
+	g++ $(CF) -o objects/LifeStruct.o LifeStruct.cpp
 
-# clobber
-clobber: .clobber-post
+objects/Point.o: Point.h Point.cpp
+	g++ $(CF) -o objects/Point.o Point.cpp
 
-.clobber-pre:
-# Add your pre 'clobber' code here...
+objects/Token.o: Token.h Token.cpp
+	g++ $(CF) -o objects/Token.o Token.cpp
 
-.clobber-post: .clobber-impl
-# Add your post 'clobber' code here...
+objects/LifeRuleSet.o: LifeRuleSet.h LifeRuleSet.cpp
+	g++ $(CF) -o objects/LifeRuleSet.o LifeRuleSet.cpp
 
-
-# all
-all: .all-post
-
-.all-pre:
-# Add your pre 'all' code here...
-
-.all-post: .all-impl
-# Add your post 'all' code here...
-
-
-# build tests
-build-tests: .build-tests-post
-
-.build-tests-pre:
-# Add your pre 'build-tests' code here...
-
-.build-tests-post: .build-tests-impl
-# Add your post 'build-tests' code here...
-
-
-# run tests
-test: .test-post
-
-.test-pre: build-tests
-# Add your pre 'test' code here...
-
-.test-post: .test-impl
-# Add your post 'test' code here...
-
-
-# help
-help: .help-post
-
-.help-pre:
-# Add your pre 'help' code here...
-
-.help-post: .help-impl
-# Add your post 'help' code here...
-
-
-
-# include project implementation makefile
-include nbproject/Makefile-impl.mk
-
-# include project make variables
-include nbproject/Makefile-variables.mk
+clean:
+	rm -rf objects/*
+	rm -rf life

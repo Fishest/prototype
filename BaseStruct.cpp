@@ -6,6 +6,12 @@
 
 using namespace std;
 
+BaseStruct::BaseStruct( StructType type ){
+    this->type = type;
+    std::string temp;
+    this->name = temp;
+}
+
 BaseStruct::BaseStruct(StructType type, std::string name){
     this->type = type;
     this->name = name;

@@ -23,6 +23,7 @@ public:
      * Creates the Life struct object. If the parameter is null then the default
      * name should be used for creating the class.
      */
+    LifeStruct();
     LifeStruct(std::string name);
 
 

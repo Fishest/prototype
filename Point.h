@@ -33,22 +33,22 @@ private:
 };
 
 inline bool operator< (const Point& a, const Point& b){
-        if( a.getFirst() < b.getFirst() ){
-            return true;
-        }
-        else if( a.getFirst() > b.getFirst() ){
-            return false;
-        }
-        
-        if( a.getSecond() < b.getSecond() ){
-            return true;
-        }
-        else if( a.getSecond() > b.getSecond() ){
-            return false;
-        }
-        
+    if( a.getFirst() < b.getFirst() ){
+        return true;
+    }
+    else if( a.getFirst() > b.getFirst() ){
         return false;
     }
+    
+    if( a.getSecond() < b.getSecond() ){
+        return true;
+    }
+    else if( a.getSecond() > b.getSecond() ){
+        return false;
+    }
+    
+    return false;
+}
 
 #endif	/* POINT_H */
 

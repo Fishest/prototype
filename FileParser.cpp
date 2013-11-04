@@ -24,11 +24,18 @@ FileParser::FileParser( std::string filename ){
     state = FileParser::NOTHING;    
 }
 
+FileParser::~FileParser(){
+
+}
+
 BaseStruct FileParser::getNext(){
     
     if( hasNext() ){
         if( state == FileParser::LIFE_START ){
             return processLifeStruct();
+        }
+        else{
+            throw new CustomException( CustomException::NO_NEXT_STRUCT );
         }
     }
     else{
@@ -58,6 +65,50 @@ bool FileParser::hasNext(){
         return false;
     }
     
+}
+
+/**
+ * Function will take a string with values of the form lower..higher. This
+ * string will then be parsed and returned as a point in the form of ( lower, higher).
+ * @param content String representation of a range.
+ * @return Point object corresponding to that range.
+ */
+Point FileParser::parseDotRange( std::string content ){
+    
+    //Use strtok to parse the ranges from the string.
+    char *ptr = NULL;
+    Point values; 
+    
+    int length = content.length();
+    char buffer[length + 1];
+    bzero( buffer, length + 1 );
+    
+    int index = 0;
+    for( index= 0; index < length; index++) {
+        buffer[index] = content.at( index );
+    }
+
+    ptr = strtok( buffer, "..");
+    if( ptr !=  NULL && FileParser::onlyDigits( ptr ) ){
+        values.setFirst( atoi( ptr ) );
+    }
+    else{
+        throw new CustomException( CustomException::INVALID_RANGE );
+    }
+    
+    ptr = strtok( NULL, "..");
+    if( ptr != NULL && FileParser::onlyDigits( ptr ) ){
+        values.setSecond( atoi( ptr ) );
+    }
+    else{
+        throw new CustomException( CustomException::INVALID_RANGE );
+    }
+    
+    if( values.getSecond() < values.getFirst() ){
+        throw new CustomException( CustomException::INVALID_RANGE );
+    }
+    
+    return values;    
 }
 
 
@@ -107,7 +158,7 @@ Token FileParser::getNextToken( char *delim, int length ){
         /*
          * Determine if collection needs to cease as a result of running into the delimiter.
          */
-        else if( delFound = isInDelim( workBuf[0], delim, length ) > 0 ){
+        else if( (delFound = isInDelim( workBuf[0], delim, length )) > 0 ){
             break;
         }
         /*
@@ -150,12 +201,101 @@ Token FileParser::getNextToken( char *delim, int length ){
     return tok;    
 }
 
+Token FileParser::getNextTokenIgnoreParen( char *delim, int length){
+
+    const int bufferSize = 4000;
+    
+    char buffer[bufferSize];
+    char workBuf[5];
+    int index = 0;
+    int insertIndex = 0;
+    int result = 0;
+    bool quoteFound = false;
+    
+    int delFound = -1;
+    
+    bzero( buffer, bufferSize);
+    bzero( workBuf, 5);
+    
+    while( index < bufferSize ){
+        bzero( workBuf, 5);
+        
+        /*
+         * Reads the next byte from the input file and handles any possible errors
+         * that were encountered.
+         */
+        result = fread( workBuf, 1, 1, input);
+        if( result <= 0 ){
+            
+            if( feof( input ) ){
+                throw new CustomException( CustomException::PREMATURE_EOF );
+            }
+            else if( ferror( input ) ){
+                
+                break;
+            }
+        }
+        
+        if( workBuf[0] == '#' ){
+            /*
+             * If the # is seen then the rest of the line should be ignored.
+             */
+            skipToNextLine();
+        }
+        /*
+         * Determine if collection needs to cease as a result of running into the delimiter.
+         */
+        else if( (delFound = isInDelim( workBuf[0], delim, length )) > 0 && !quoteFound ){
+            break;
+        }
+        /*
+         * Toggles the quoteFound variable. This is important because whitespace that is within
+         * a quotation mark is important.
+         */
+        else if( workBuf[0] == '(' ){
+            buffer[insertIndex++] = workBuf[0];
+            quoteFound = true;
+        }
+        else if( workBuf[0] == ')' ){
+            buffer[insertIndex++] = workBuf[0];
+            quoteFound = false;
+        }
+        /*
+         * Determine if the element is white space or something else.
+         */
+        else if( !isspace( workBuf[0] ) ){
+            
+            /*
+             * We found a character that isn't any form of white space. It needs to be
+             * added to the buffer to be returned.
+             */
+            buffer[insertIndex++] = workBuf[0];
+        }
+        else if( quoteFound && isspace( workBuf[0] ) ){
+            buffer[insertIndex++] = workBuf[0];
+        }
+        
+        index++;
+        
+    } //Ends while loop
+     
+    if( index >= bufferSize ){
+        throw new CustomException( CustomException::NOT_ENOUGH_BUFFER_FOR_TOKEN );
+    }
+    
+    //Time to build string that will be returned.
+    std::string retVal( buffer );
+    Token tok( delFound, retVal );
+   
+    return tok;    
+}
+
 Color FileParser::parseColor(std::string content){
     
     char buffer[100];
-    int insertIndex = 0;
-    int index = 0;
-    int state = 0;
+    unsigned int insertIndex = 0;
+    unsigned int index = 0;
+    unsigned int state = 0;
     int red = -1, green = -1, blue = -1;
     
     bzero( buffer, 100);
@@ -165,13 +305,13 @@ Color FileParser::parseColor(std::string content){
         /*
          * Makes sure the parenthesis and white space is ignored during the processing of the color information.
          */
-        if( content[index] != '(' && content[index] != ')' && !isspace( content[index] ) ){
+        if( content[index] != '(' && !isspace( content[index] ) ){
             
             /*
              * If the current character is a comma then it's time to break apart and parse the content
              * within the buffer.
              */
-            if( content[index] == ','){
+            if( content[index] == ',' || content[index] == ')' ){
                 
                 /*
                  * If comma is seen then the content in the buffer needs to be processed.
@@ -185,14 +325,15 @@ Color FileParser::parseColor(std::string content){
                 if( state == 0 ){
                     red = temp;
                     state++;
-                }else if( state == 1 ){
-                    blue = temp;
-                    state++;
                 }else if( state == 2 ){
-                    green = temp;
+                    blue = temp;
                     break;
+                }else if( state == 1 ){
+                    green = temp;
+                    state++;
                 }
                 
+                insertIndex = 0;
                 bzero( buffer, 100);
                 
             } //Ends comma if statement
@@ -225,8 +366,8 @@ Color FileParser::parseColor(std::string content){
 Point FileParser::parsePoint(std::string content){
     
     char buffer[100];
-    int insertIndex = 0;
-    int index = 0;
+    unsigned int insertIndex = 0;
+    unsigned int index = 0;
     int state = 0;
     int val1 = 0, val2 = 0;
     bool val1Found = false;
@@ -239,13 +380,13 @@ Point FileParser::parsePoint(std::string content){
         /*
          * Makes sure the parenthesis and white space is ignored during the processing of the color information.
          */
-        if( content[index] != '(' && content[index] != ')' && !isspace( content[index] ) ){
+        if( content[index] != '(' && !isspace( content[index] ) ){
             
             /*
              * If the current character is a comma then it's time to break apart and parse the content
              * within the buffer.
              */
-            if( content[index] == ','){
+            if( content[index] == ',' || content[index] == ')' ){
                 
                 /*
                  * If comma is seen then the content in the buffer needs to be processed.
@@ -264,6 +405,7 @@ Point FileParser::parsePoint(std::string content){
                 }
                 
                 bzero( buffer, 100);
+                insertIndex = 0;
                 
             } //Ends comma if statement
             else{
@@ -285,8 +427,7 @@ Point FileParser::parsePoint(std::string content){
     
     Point temp( val1, val2);
     
-    return temp;
-    
+    return temp;    
 }
 
 void FileParser::skipToNextLine(){
@@ -311,7 +452,6 @@ void FileParser::skipToNextLine(){
         }
         
     } //Ends while loop
-    
 }
 
 Grid FileParser::processInititalLayout( ){
@@ -331,7 +471,7 @@ Grid FileParser::processInititalLayout( ){
      * should contain the previously found state.
      */
     
-    Token tok = getNextToken( "{", 1);
+    Token tok = getNextTokenIgnoreParen( "{", 1);
     while( tok.getMatachedDelim() != '}' ){
         
         if( state == 0 && tok.getMatachedDelim() == '=' ){
@@ -364,12 +504,12 @@ Grid FileParser::processInititalLayout( ){
         }
         
         //Grab the next token from the file.
-        tok = getNextToken( ",=;}", 4);
+        tok = getNextTokenIgnoreParen( ",=;}", 4);
         
     } //Ends the while loop
     
     //Reads the final semi-colon after the struct.
-    getNextToken( ";", 1);
+    getNextTokenIgnoreParen( ";", 1);
     
     return data;   
 }
@@ -392,7 +532,7 @@ grid_dimension FileParser::processTerrain(){
     Token value = getNextToken(";", 1);
     
     Token header2 = getNextToken("=", 1);
-    Token value2 = getNextToken("=", 1);
+    Token value2 = getNextToken(";", 1);
     
     Point pt1 = parseDotRange( value.getContent() );
     Point pt2 = parseDotRange( value2.getContent() );
@@ -424,58 +564,19 @@ grid_dimension FileParser::processTerrain(){
     getNextToken(";", 1);
     
     return grid;
-    
-}
-
-/**
- * Function will take a string with values of the form lower..higher. This
- * string will then be parsed and returned as a point in the form of ( lower, higher).
- * @param content String representation of a range.
- * @return Point object corresponding to that range.
- */
-Point FileParser::parseDotRange( std::string content ){
-    
-    //Use strtok to parse the ranges from the string.
-    char *ptr = NULL;
-    Point values; 
-    
-    int length = content.length();
-    char buffer[length + 1];
-    bzero( buffer, length + 1 );
-    
-    int index = 0;
-    for( index= 0; index < length; index++) {
-        buffer[index] = content.at( index );
-    }
-
-    ptr = strtok( buffer, "..");
-    if( ptr !=  NULL && onlyDigits( ptr ) ){
-        values.setFirst( atoi( ptr ) );
-    }
-    else{
-        throw new CustomException( CustomException::INVALID_RANGE );
-    }
-    
-    ptr = strtok( NULL, "..");
-    if( ptr != NULL && onlyDigits( ptr ) ){
-        values.setSecond( atoi( ptr ) );
-    }
-    else{
-        throw new CustomException( CustomException::INVALID_RANGE );
-    }
-    
-    if( values.getSecond() > values.getFirst() ){
-        throw new CustomException( CustomException::INVALID_RANGE );
-    }
-    
-    return values;    
 }
 
 BaseStruct FileParser::processLifeStruct(){
     
     defaultState = Grid::DEAD;
+
+    bool winDefined = false;
+    bool terrainDefined = false;
+    bool charsDefined = false;
+    bool colorsDefined = false;
+    bool initialDefined = false;
     
-    LifeStruct life( NULL );
+    LifeStruct life;
     
     Token tok = getNextToken( "{", 1);
     ParseState state = FileParser::LIFE_START;
@@ -493,26 +594,32 @@ BaseStruct FileParser::processLifeStruct(){
             else if( tok.getContent().find( "Terrain" ) != tok.getContent().npos ){
                 grid_dimension dimen = processTerrain();
                 life.setTerrain( dimen );
+                terrainDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Window" ) != tok.getContent().npos ){
                 grid_dimension dimen = processTerrain();
+                winDefined = true;
                 life.setWindow( dimen );
+
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Chars" ) != tok.getContent().npos ){
                 std::map< Grid::cell_state, int > temp = processChars();
                 life.setCharMap( temp );
+                charsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Colors" ) != tok.getContent().npos ){
                 std::map< Grid::cell_state, Color> temp = processColors();
                 life.setColorMap( temp );
+                colorsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Initial" ) != tok.getContent().npos ){
                 Grid temp = processInititalLayout();
                 life.setGrid( temp );
+                initialDefined = true;
                 state = FileParser::LIFE_START;
             }
         }
@@ -522,12 +629,19 @@ BaseStruct FileParser::processLifeStruct(){
             }
         
     } //Ends while loop
+
+    if( !terrainDefined || !charsDefined || !colorsDefined || !initialDefined ){
+        throw new CustomException( CustomException::INVALID_FILE );
+    }
+
+    if( !winDefined ){
+        life.setWindow( life.getTerrain() );
+    }
     
     //Get rid of trailing semi-colon
     getNextToken( ";" , 1);
     
-    return life;
-    
+    return life;  
 }
 
 std::map< Grid::cell_state, int> FileParser::processChars(){
@@ -642,8 +756,8 @@ std::map< Grid::cell_state, Color> FileParser::processColors(){
 
 bool FileParser::onlyDigits( char *ptr ){
     
-    while( ptr != NULL ){
-        if( !( *ptr >= 60 && *ptr <= 71) ){
+    while( ptr != NULL && *ptr != 0 ){
+        if( !( (*ptr >= 48 && *ptr <= 57) || *ptr == '-' ) ){
             return false;
         }
         ptr++;

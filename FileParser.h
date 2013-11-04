@@ -15,6 +15,7 @@
 #include "Point.h"
 #include "Color.h"
 #include "Token.h"
+#include "LifeStruct.h"
 
 class FileParser {
 public:
@@ -25,6 +26,9 @@ public:
 
     BaseStruct getNext();
     bool hasNext();
+
+    static Point parseDotRange( std::string content );
+    static bool onlyDigits( char *ptr );
 
 private:
 
@@ -38,6 +42,7 @@ private:
 
     //Functions for moving around inside the file.
     Token getNextToken( char *delim, int length );
+    Token getNextTokenIgnoreParen( char *delim, int length);
     void skipToNextLine();
     
     //Functions for handling the structs defined in file
@@ -53,12 +58,14 @@ private:
     Color parseColor( std::string content );
     Point parsePoint( std::string content );
     
-    Point parseDotRange( std::string content );
-    
-    bool onlyDigits( char *ptr );
     int isInDelim( char value, char *ptr, int length );
  
 };
+
+inline LifeStruct operator=(const BaseStruct & base){
+   
+    return NULL;
+}
 
 #endif	/* FILEPARSER_H */
 

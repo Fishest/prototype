@@ -9,14 +9,14 @@
 #define	IRULESET_H
 
 #include "constants.h"
+#include "Grid.h"
 
 class iRuleSet {
 public:
     
-    virtual Grid& simulateGenerations( Grid live, int numGenerations, grid_dimension terrain) = 0;
+    virtual void simulateGenerations( Grid & live, int numGenerations, grid_dimension terrain) = 0;
     
 };
-
 
 #endif	/* IRULESET_H */
 
