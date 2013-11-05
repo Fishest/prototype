@@ -26,6 +26,8 @@ public:
     LifeStruct();
     LifeStruct(std::string name);
 
+    void generateFile( FILE *ptr );
+
 
 private:
 

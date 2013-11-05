@@ -14,7 +14,34 @@
 #include "visuals.h"
 
 void printHelpMessage(){
-	printf("Needs implemented.\n");
+	fprintf( stderr, "\n\nLife\n");
+	fprintf( stderr, "Developer: Cameron Whipple\n");
+	fprintf( stderr, "-----------------------------------------------------------------------\n");
+	fprintf( stderr, "The life application provides a way to run simulations on differing life states.\n");
+	fprintf( stderr, "It is based on the \"Game of Life\" that was devised by John Conway in the 1970's.\n");
+	fprintf( stderr, "The simulations work by defining layout of cells within a grid. Each of these cells\n");
+	fprintf( stderr, "are provided a state, such as Dead or Alive. The program then runs through a specified\n");
+	fprintf( stderr, "number of generations in which the states of the cells are altered based on the rule set.\n");
+	fprintf( stderr, "Over the years, several different sets of rules have been derived to alter the flow of\n");
+	fprintf( stderr, "the simulations.\n\n");
+
+	fprintf( stderr, "The application is able to accept configuration information in two ways. The default method\n");
+	fprintf( stderr, "involves reading the content from the standard input stream. The second method is enabled by\n");
+	fprintf( stderr, "specifying the name of a file from the command line. An example of this is given below.\n");
+
+	fprintf( stderr, "\n\t./life [switches] file1\n\n");
+
+	fprintf( stderr, "There are several switches that can be used to control the operation of the application.\n");
+	fprintf( stderr, "-f : The results of the simulation will be output in a form consistent with input file.\n");
+	fprintf( stderr, "-g N : Specifies the number of generations that should be simulated.\n");
+	fprintf( stderr, "-h : Displays this help message\n");
+	fprintf( stderr, "-tx l..h : Specify the X values of the terrain, will override content from file.\n");
+	fprintf( stderr, "-ty l..h : Specify the Y values of the terrain, will override content from file.\n");
+	fprintf( stderr, "-v : Displays the results of the simuations in an ascii format.\n");
+	fprintf( stderr, "-wx : Controls the width of the cells that are displayed on the screen.\n");
+	fprintf( stderr, "-wy : Controls the height of the cells that are displayed on the screen.\n\n\n");
+
+	return;
 }
 
 int main( int argc, char **args ){
@@ -45,6 +72,7 @@ int main( int argc, char **args ){
 
 		if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 'h' ){
 			printHelpMessage();
+			return 0;
 		}
 		else if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 'f' ){
 			fileOutput = true;
@@ -236,6 +264,9 @@ int main( int argc, char **args ){
 	 	AsciiVisual vis;
 
 	 	vis.visualize( life );
+	 }
+	 else if( fileOutput ){
+	 	life->generateFile( stdout );
 	 }
 
 	delete life;

@@ -51,7 +51,7 @@ public:
     void setCharMap( std::map< Grid::cell_state, int > map );
 
     //Open the file with a create or append format
-    //virtual void export( FILE *ptr ) = 0;
+    virtual void generateFile( FILE *ptr ) = 0;
     
 private:
     void init();

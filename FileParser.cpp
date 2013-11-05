@@ -25,7 +25,6 @@ FileParser::FileParser( std::string filename ){
 }
 
 FileParser::~FileParser(){
-
 }
 
 BaseStruct* FileParser::getNext(){
@@ -40,8 +39,7 @@ BaseStruct* FileParser::getNext(){
     }
     else{
         throw new CustomException( CustomException::NO_NEXT_STRUCT );
-    }
-    
+    }  
 }
 
 bool FileParser::hasNext(){
@@ -64,7 +62,6 @@ bool FileParser::hasNext(){
     }catch( CustomException a){
         return false;
     }
-    
 }
 
 /**
@@ -493,14 +490,14 @@ Grid FileParser::processInititalLayout( ){
         else if( state == 1 && ( tok.getMatachedDelim() == ',' || tok.getMatachedDelim() == ';' ) ){
             //Found another point in the file that needs to be processed and added to the map.
            
-            //Found the last point and thus we want to switch to state of needing a new header.
-            if( tok.getMatachedDelim() == ';' )
-                state = 0;
-            
             Point pt = parsePoint( tok.getContent() );
             
             //Update the Grid with the newly found point
-            data.set( pt, currentState );           
+            data.set( pt, currentState );   
+
+            //Found the last point and thus we want to switch to state of needing a new header.
+            if( tok.getMatachedDelim() == ';' )
+                state = 0;        
         }
         
         //Grab the next token from the file.
