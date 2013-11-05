@@ -10,7 +10,7 @@
 LifeRuleSet::LifeRuleSet(){
 }
 
-Grid::cell_state LifeRuleSet::calculateNewState( Grid & data, Point pt, grid_dimension terrain ){
+Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimension terrain ){
 
 	int rowIndex = 0;
 	int count = 0;
@@ -70,8 +70,9 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid & data, Point pt, grid_dim
 	}
 }
 
-void LifeRuleSet::simulateGenerations( Grid & live, int numGenerations, grid_dimension terrain){
-	Grid & data = live;
+Grid LifeRuleSet::simulateGenerations( Grid live, int numGenerations, grid_dimension terrain){
+	Grid current = live;
+	Grid past = live;
 
 	if( numGenerations < 0 ){
 		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
@@ -92,15 +93,23 @@ void LifeRuleSet::simulateGenerations( Grid & live, int numGenerations, grid_dim
 			for( colIndex = terrain.xVals.getFirst(); colIndex <= terrain.xVals.getSecond(); colIndex++ ){
 
 				Point temp( colIndex, rowIndex);
-				Grid::cell_state newState = calculateNewState( data, temp, terrain);
+				Grid::cell_state newState = calculateNewState( past, temp, terrain);
 
 				//Updates the state with the currently processing cell.
-				data.set( temp, newState );
+				current.set( temp, newState );
 			}
 		}
+
+		//Updates the reading table
+		past = current;
+
+		//Clears the current board so that it can be filled again.
+		current.reset( live.getDefault() );
 
 		//Completed another generation of simulations
 		currentGen++;	
 	}
+
+	return past;
 }
 

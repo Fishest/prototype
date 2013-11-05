@@ -10,12 +10,15 @@ BaseStruct::BaseStruct( StructType type ){
     this->type = type;
     std::string temp;
     this->name = temp;
+    winDefined = false;
 }
 
 BaseStruct::BaseStruct(StructType type, std::string name){
     this->type = type;
     this->name = name;
+    winDefined = false;
 }
+
 
 void BaseStruct::init(){
     type = BaseStruct::UNKOWN;
@@ -72,7 +75,14 @@ BaseStruct::StructType BaseStruct::getType(){
 }
 
 grid_dimension BaseStruct::getWindow(){
-    return window;
+    if( winDefined )
+        return window;
+    else
+        return terrain;
+}
+
+bool BaseStruct::isWinDefined(){
+    return winDefined;
 }
 
 grid_dimension BaseStruct::getTerrain(){
@@ -119,8 +129,8 @@ void BaseStruct::setGrid(Grid update){
 }
 
 void BaseStruct::setWindow(grid_dimension dimen){
-    
     this->window = dimen;
+    winDefined = true;
 }
 
 void BaseStruct::setColorMap( std::map< Grid::cell_state, Color> map ){

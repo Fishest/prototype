@@ -9,7 +9,8 @@ OBJECTS=objects/Life.o\
 		objects/LifeStruct.o\
 		objects/Point.o\
 		objects/Token.o\
-		objects/LifeRuleSet.o
+		objects/LifeRuleSet.o\
+		objects/AsciiVisual.o
 
 apps: life
 
@@ -47,6 +48,9 @@ objects/Token.o: Token.h Token.cpp
 
 objects/LifeRuleSet.o: LifeRuleSet.h LifeRuleSet.cpp
 	g++ $(CF) -o objects/LifeRuleSet.o LifeRuleSet.cpp
+
+objects/AsciiVisual.o: AsciiVisual.h visuals.h AsciiVisual.cpp
+	g++ $(CF) -o objects/AsciiVisual.o AsciiVisual.cpp
 
 clean:
 	rm -rf objects/*

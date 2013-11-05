@@ -135,3 +135,7 @@ void Grid::set(Point dimen, Grid::cell_state value){
         
     }
 }
+
+Grid::cell_state Grid::getDefault(){
+    return defaultState;
+}

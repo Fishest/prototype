@@ -28,7 +28,7 @@ FileParser::~FileParser(){
 
 }
 
-BaseStruct FileParser::getNext(){
+BaseStruct* FileParser::getNext(){
     
     if( hasNext() ){
         if( state == FileParser::LIFE_START ){
@@ -566,17 +566,16 @@ grid_dimension FileParser::processTerrain(){
     return grid;
 }
 
-BaseStruct FileParser::processLifeStruct(){
+BaseStruct* FileParser::processLifeStruct(){
     
     defaultState = Grid::DEAD;
 
-    bool winDefined = false;
     bool terrainDefined = false;
     bool charsDefined = false;
     bool colorsDefined = false;
     bool initialDefined = false;
-    
-    LifeStruct life;
+
+    LifeStruct *life = new LifeStruct();
     
     Token tok = getNextToken( "{", 1);
     ParseState state = FileParser::LIFE_START;
@@ -588,37 +587,35 @@ BaseStruct FileParser::processLifeStruct(){
            
             if( tok.getContent().find( "Name" ) != tok.getContent().npos ){
                 tok = getNextToken(";", 1);
-                 life.setName( tok.getContent() );
+                 life->setName( tok.getContent() );
                  state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Terrain" ) != tok.getContent().npos ){
                 grid_dimension dimen = processTerrain();
-                life.setTerrain( dimen );
+                life->setTerrain( dimen );
                 terrainDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Window" ) != tok.getContent().npos ){
                 grid_dimension dimen = processTerrain();
-                winDefined = true;
-                life.setWindow( dimen );
-
+                life->setWindow( dimen );
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Chars" ) != tok.getContent().npos ){
                 std::map< Grid::cell_state, int > temp = processChars();
-                life.setCharMap( temp );
+                life->setCharMap( temp );
                 charsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Colors" ) != tok.getContent().npos ){
                 std::map< Grid::cell_state, Color> temp = processColors();
-                life.setColorMap( temp );
+                life->setColorMap( temp );
                 colorsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Initial" ) != tok.getContent().npos ){
                 Grid temp = processInititalLayout();
-                life.setGrid( temp );
+                life->setGrid( temp );
                 initialDefined = true;
                 state = FileParser::LIFE_START;
             }
@@ -632,10 +629,6 @@ BaseStruct FileParser::processLifeStruct(){
 
     if( !terrainDefined || !charsDefined || !colorsDefined || !initialDefined ){
         throw new CustomException( CustomException::INVALID_FILE );
-    }
-
-    if( !winDefined ){
-        life.setWindow( life.getTerrain() );
     }
     
     //Get rid of trailing semi-colon

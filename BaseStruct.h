@@ -39,6 +39,7 @@ public:
     
     grid_dimension getWindow();
     void setWindow(grid_dimension dimen);
+    bool isWinDefined();
     
     int getChar( Grid::cell_state value );
     void setChar( Grid::cell_state state, int value );
@@ -48,6 +49,9 @@ public:
     
     void setColorMap( std::map< Grid::cell_state, Color> map );
     void setCharMap( std::map< Grid::cell_state, int > map );
+
+    //Open the file with a create or append format
+    //virtual void export( FILE *ptr ) = 0;
     
 private:
     void init();
@@ -57,6 +61,7 @@ protected:
     StructType type;
     std::string name;
     Grid data;
+    bool winDefined;
     
     grid_dimension terrain;
     grid_dimension window;

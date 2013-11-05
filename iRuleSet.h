@@ -14,7 +14,7 @@
 class iRuleSet {
 public:
     
-    virtual void simulateGenerations( Grid & live, int numGenerations, grid_dimension terrain) = 0;
+    virtual Grid simulateGenerations( Grid live, int numGenerations, grid_dimension terrain) = 0;
     
 };
 

@@ -10,6 +10,8 @@
 #include "constants.h"
 #include "LifeStruct.h"
 #include "CustomException.h"
+#include "AsciiVisual.h"
+#include "visuals.h"
 
 void printHelpMessage(){
 	printf("Needs implemented.\n");
@@ -24,15 +26,19 @@ int main( int argc, char **args ){
 	Point ty;
 	Point wx;
 	Point wy;
-	bool terrainOverride = false;
-	bool windowOverride = false;
+	bool terrainXOverride = false;
+	bool terrainYOverride = false;
+	bool winXOverride = false;
+	bool winYOverride = false;
 	bool visualOutput = false;
 	bool fileInput = false;
 	std::string filename;
 
+	BaseStruct* base = NULL;
+
 	LifeRuleSet rules;
-	LifeStruct life;
-	
+	LifeStruct *life = NULL;
+
 	FILE *input = NULL;
 
 	while( index < argc ){
@@ -64,6 +70,7 @@ int main( int argc, char **args ){
 			try{
 				std::string content( args[index] );
 				tx = FileParser::parseDotRange( content );
+				terrainXOverride = true;
 			}catch( CustomException& a ){
 				fprintf( stderr, "Unable to process X Terrain range.\n");
 				return 0;
@@ -80,6 +87,7 @@ int main( int argc, char **args ){
 			try{
 				std::string content( args[index] );
 				ty = FileParser::parseDotRange( content );
+				terrainYOverride = true;
 			}catch( CustomException& a ){
 				fprintf( stderr, "Unable to process Y Terrain range.\n");
 				return 0;
@@ -99,6 +107,7 @@ int main( int argc, char **args ){
 			try{
 				std::string content( args[index] );
 				wx = FileParser::parseDotRange( content );
+				winXOverride = true;
 			}catch( CustomException a ){
 				fprintf( stderr, "Unable to process X Window range.\n");
 				return 0;
@@ -115,6 +124,7 @@ int main( int argc, char **args ){
 			try{
 				std::string content( args[index] );
 				wy = FileParser::parseDotRange( content );
+				winYOverride = true;
 			}catch( CustomException a ){
 				fprintf( stderr, "Unable to process Y Window range.\n");
 				return 0;
@@ -129,6 +139,11 @@ int main( int argc, char **args ){
 		index++;
 
 	} //Ends While loop
+
+	if( !fileOutput && !visualOutput ){
+		fprintf( stderr, "Please specify output form.\n");
+		return 0;
+	}
 
 	/*
 		Set up the input file so that it can be passed to the appropriate parsing function.
@@ -154,7 +169,7 @@ int main( int argc, char **args ){
 		FileParser parse( input );
 
 		if( parse.hasNext() ){
-			life = parse.getNext();
+			base = parse.getNext();
 		}
 
 	}catch( CustomException a ){
@@ -162,46 +177,68 @@ int main( int argc, char **args ){
 		return 0;
 	}
 
+	if( base != NULL && base->getType() == BaseStruct::LIFE ){
+		life = (LifeStruct*)base;
+	}
+
+	if( life == NULL ){
+		fprintf( stderr, "Error during processing of Life struct.\n");
+		return 0;
+	}
+
 	/*
 	 * The next step is to update the window and terrain values within the struct
 	 * with the values that were pulled from the arguments.
 	 */
-	 
-	 //Override the terrain from the file with the ones from the command line.
-	 if( terrainOverride ){
-	 	grid_dimension dimen;
+
+	 if( terrainXOverride ){
+	 	grid_dimension dimen = life->getTerrain();
 	 	dimen.xVals = tx;
+	 	life->setTerrain( dimen );
+	 }
+
+	 if( terrainYOverride ){
+	 	grid_dimension dimen = life->getTerrain();
 	 	dimen.yVals = ty;
-	 	life.setTerrain( dimen );
-
-	 	if( !windowOverride ){
-	 		grid_dimension win;
-	 		win.xVals = tx;
-	 		win.yVals = ty;
-	 		life.setWindow( win );
-	 	}
+	 	life->setTerrain( dimen );
 	 }
 
-	 if( windowOverride ){
+	 if( winXOverride ){
 	 	grid_dimension dimen;
+	 	if( life->isWinDefined() )
+	 		dimen = life->getWindow();
+	 	
 	 	dimen.xVals = wx;
-	 	dimen.yVals = wy;
-	 	life.setWindow( dimen );
+	 	life->setWindow( dimen );
 	 }
 
+	 if( winYOverride ){
+	 	grid_dimension dimen;
+	 	if( life->isWinDefined() )
+	 		dimen = life->getWindow();
+
+	 	dimen.yVals = wy;
+	 	life->setWindow( dimen );
+	 }
+	 
 	/*
 	 * The next step is to run the grid through the requested number of generations.
 	 */
-	 Grid locGrid = life.getGrid();
+	 Grid locGrid = life->getGrid();
 	 Grid & refGrid = locGrid;
-	 rules.simulateGenerations( refGrid, generations, life.getTerrain() );
+	 life->setGrid( rules.simulateGenerations( refGrid, generations, life->getTerrain() ) );
 
 	/*
 	 * The last step is to output the results of the simulations to standard output. The format
 	 * is controlled through the use of the command line arguments.
 	 */
-	//TODO Implement the code to handle the exportation.
+	 if( visualOutput ){
+	 	AsciiVisual vis;
 
+	 	vis.visualize( life );
+	 }
+
+	delete life;
 
 	return 0;
 }

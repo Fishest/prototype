@@ -9,6 +9,7 @@
 #define	GRID_H
 
 #include <vector>
+#include <map>
 
 #include "Point.h"
 #include "constants.h"
@@ -42,6 +43,8 @@ public:
     grid_dimension getTerrain();
     
     std::vector< Point > getAllWithState( Grid::cell_state val );
+
+    Grid::cell_state getDefault();
 
 private:
     

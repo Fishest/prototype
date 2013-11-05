@@ -10,10 +10,10 @@ class LifeRuleSet : public iRuleSet {
 
 	public:
 		LifeRuleSet();
-		virtual void simulateGenerations( Grid & live, int numGenerations, grid_dimension terrain);
+		virtual Grid simulateGenerations( Grid live, int numGenerations, grid_dimension terrain);
 
 	private:
-		Grid::cell_state calculateNewState( Grid & data, Point pt, grid_dimension terrain );
+		Grid::cell_state calculateNewState( Grid data, Point pt, grid_dimension terrain );
 };
 
 #endif

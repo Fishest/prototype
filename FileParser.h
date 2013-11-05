@@ -24,7 +24,7 @@ public:
     FileParser( std::string filename );
     ~FileParser();
 
-    BaseStruct getNext();
+    BaseStruct* getNext();
     bool hasNext();
 
     static Point parseDotRange( std::string content );
@@ -46,7 +46,7 @@ private:
     void skipToNextLine();
     
     //Functions for handling the structs defined in file
-    BaseStruct processLifeStruct();
+    BaseStruct* processLifeStruct();
 
     //Functions for parsing the smaller sections of the Structs
     Grid processInititalLayout( );
@@ -61,11 +61,6 @@ private:
     int isInDelim( char value, char *ptr, int length );
  
 };
-
-inline LifeStruct operator=(const BaseStruct & base){
-   
-    return NULL;
-}
 
 #endif	/* FILEPARSER_H */
 
