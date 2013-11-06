@@ -5,5 +5,7 @@ all: total.pro
 clean:
 	rm life life_gui
 	make clean -f qmake_makefile
-	rm qmake_makefile
+	find . -iname "qmake_makefile" -exec rm {} \;
+	rm common/libcommon.a
+
 
