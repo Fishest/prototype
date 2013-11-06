@@ -4,14 +4,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "FileParser.h"
-#include "Point.h"
-#include "LifeRuleSet.h"
-#include "constants.h"
-#include "LifeStruct.h"
-#include "CustomException.h"
-#include "AsciiVisual.h"
-#include "visuals.h"
+#include "../common/FileParser.h"
+#include "../common/Point.h"
+#include "../common/LifeRuleSet.h"
+#include "../common/constants.h"
+#include "../common/LifeStruct.h"
+#include "../common/CustomException.h"
+#include "../common/AsciiVisual.h"
+#include "../common/visuals.h"
 
 void printHelpMessage(){
 	fprintf( stderr, "\n\nLife\n");
