@@ -22,6 +22,7 @@ class LifeGUI : public QWidget{
 
 	void setPenColor( const QColor &newColor);
 	QColor penColor() const {return curColor; }
+	
 	void setImage( const QImage &newImage );
 	QImage getImage() const {return image;}
 	QSize sizeHint() const;
@@ -45,10 +46,6 @@ class LifeGUI : public QWidget{
 	private:
 	void init();
 	void updateImageSize();
-	void updateImageContent( BaseStruct *pointer );
-	
-
-	void duplicateStruct( BaseStruct *sA, BaseStruct *sB);
 
 	QColor curColor;
 	QImage image;

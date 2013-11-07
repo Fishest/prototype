@@ -64,14 +64,6 @@ void LifeGUI::setPixels( int pixel ){
 	}
 }
 
-void LifeGUI::setImage( const QImage &newImage ){
-	if( newImage != image ){
-		image = newImage.convertToFormat( QImage::Format_ARGB32 );
-		update();
-		updateGeometry();
-	}
-}
-
 //Tells the QT what size the widge should be
 //Should calculate the width given the pixel size
 //and the presence of lines.
@@ -155,6 +147,8 @@ void LifeGUI::setStruct( BaseStruct *newBase ){
 	original = newBase;
 	current = original->duplicate();
 
+	this->setWindowTitle( current->getName().c_str() );
+
 	update();
 	updateGeometry();
 }
@@ -182,8 +176,10 @@ void LifeGUI::runGenerations( int number ){
 
 	Grid tGrid = rules->simulateGenerations( current->getGrid(), number, current->getTerrain() );
 	current->setGrid( tGrid );
-
-	update();
-	updateGeometry();
 }
+
+void LifeGUI::setImage( const QImage &newImage){
+	this->image = newImage;
+}
+
 
