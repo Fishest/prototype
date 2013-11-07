@@ -27,6 +27,7 @@ public:
     LifeStruct(std::string name);
 
     void generateFile( FILE *ptr );
+    BaseStruct* duplicate();
 
 
 private:

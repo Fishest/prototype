@@ -25,6 +25,7 @@ public:
     BaseStruct( StructType type );
     
     BaseStruct( StructType type, std::string name );
+    virtual ~BaseStruct();
 
     StructType getType();
     
@@ -39,7 +40,9 @@ public:
     
     grid_dimension getWindow();
     void setWindow(grid_dimension dimen);
+    
     bool isWinDefined();
+    void setWinDefined( bool define );
     
     int getChar( Grid::cell_state value );
     void setChar( Grid::cell_state state, int value );
@@ -52,6 +55,7 @@ public:
 
     //Open the file with a create or append format
     virtual void generateFile( FILE *ptr ) = 0;
+    virtual BaseStruct* duplicate() = 0;
     
 private:
     void init();

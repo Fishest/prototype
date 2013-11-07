@@ -54,7 +54,18 @@ void LifeStruct::generateFile( FILE *ptr ){
 	fprintf( ptr, "\t};\n");
 
 	fprintf( ptr, "};\n");
+}
 
+BaseStruct* LifeStruct::duplicate(){
 
+	LifeStruct *life = new LifeStruct( name );
 
+	life->setGrid( this->getGrid() );
+	life->setTerrain( this->getTerrain() );
+	life->setWindow( this->getWindow() );
+	life->setColorMap( colorMap );
+	life->setCharMap( charMap );
+	life->setWinDefined( winDefined );
+
+	return (BaseStruct*)life;
 }

@@ -19,6 +19,8 @@ BaseStruct::BaseStruct(StructType type, std::string name){
     winDefined = false;
 }
 
+BaseStruct::~BaseStruct(){}
+
 
 void BaseStruct::init(){
     type = BaseStruct::UNKOWN;
@@ -83,6 +85,10 @@ grid_dimension BaseStruct::getWindow(){
 
 bool BaseStruct::isWinDefined(){
     return winDefined;
+}
+
+void BaseStruct::setWinDefined( bool define ){
+    winDefined = define;
 }
 
 grid_dimension BaseStruct::getTerrain(){

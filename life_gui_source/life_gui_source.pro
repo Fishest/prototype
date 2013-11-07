@@ -1,5 +1,5 @@
 TARGET = ../life_gui
-SOURCES = main.cpp LifeGUI.cpp
+SOURCES = LifeGUI.cpp life_gui.cpp
 HEADERS = LifeGUI.h 
 INCLUDEPATH += ../common
 LIBS += -L../common -lcommon

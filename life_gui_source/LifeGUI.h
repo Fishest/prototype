@@ -5,6 +5,10 @@
 #include <QImage>
 #include <QWidget>
 
+#include "../common/constants.h"
+#include "../common/BaseStruct.h"
+#include "../common/iRuleSet.h"
+
 class LifeGUI : public QWidget{
 
 	Q_OBJECT
@@ -18,11 +22,20 @@ class LifeGUI : public QWidget{
 
 	void setPenColor( const QColor &newColor);
 	QColor penColor() const {return curColor; }
-	void setPixels( int pixel );
-	int numPixels() const { return pixels; }
 	void setImage( const QImage &newImage );
 	QImage getImage() const {return image;}
 	QSize sizeHint() const;
+
+	void runGenerations( int number );
+
+	void setStruct( BaseStruct *base );
+	BaseStruct *getStruct();
+
+	void setRuleSet( iRuleSet *base );
+	iRuleSet* getRuleSet();
+
+	void setPixels( int pixel );
+	int numPixels() const { return pixels; }
 
 	protected:
 	void mousePressEvent( QMouseEvent *event );
@@ -30,9 +43,23 @@ class LifeGUI : public QWidget{
 	void paintEvent( QPaintEvent *event );
 
 	private:
+	void init();
+	void updateImageSize();
+	void updateImageContent( BaseStruct *pointer );
+	
+
+	void duplicateStruct( BaseStruct *sA, BaseStruct *sB);
+
 	QColor curColor;
 	QImage image;
 	int pixels;
+	int pixelHeight;
+	int pixelWidth;
+	int numElementsWidth;
+	int numElementsHeight;
+	BaseStruct *original;
+	BaseStruct *current;
+	iRuleSet *rules;
 
 };
 
