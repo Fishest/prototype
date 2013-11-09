@@ -32,7 +32,8 @@ public:
         INVALID_CELL_STATE_FOUND /*During processing, a state was found that isn't currently defined in application*/,
         PREMATURE_EOF,
         NO_NEXT_STRUCT,
-		NEGATIVE_GENERATIONS
+	NEGATIVE_GENERATIONS,
+	INVALID_CHAR
                 
     };
 

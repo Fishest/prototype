@@ -1,0 +1,57 @@
+#
+# Comments, to be ignored
+#
+
+Life = 
+{
+	Name = "Hi Brandi!";
+
+	Terrain = {
+		Xrange = -55..-33;
+		Yrange
+		= -1 ..   11 ;
+	};
+
+	# Use the same window as the terrain
+	# i.e., view everything
+
+	Chars = {
+		Alive = 64; #ASCII code for @
+		Dead = 126; #ASCII code for ~
+	};
+
+	Colors = {
+		Alive = (255, 62, 150);
+		Dead = (75, 0, 130);
+	};
+
+	Initial = {
+# Set coordinates of the alive cells
+	#everything else is dead
+		Alive = (-50, 9), (-50, 8), (-50, 7), (-50, 6),(-50,5), (-49,7), (-48, 7), (-49,9), (-48       ,           9),
+		(-49				,
+		5),(
+		-48,
+
+		5)
+
+
+
+
+		(-46, 8), (-46, 7), (-46, 6), (-46,4),         (-46,                   5), (-46,3),
+
+		(-45, 3), (-44, 3), (-42, 6), (-42, 2), (-42, 5), (-42,4), (-42, 3), (-41 #start of the x factor
+		, #you know this is a text line right 10),
+		6), (-43, 6), (-41, 2), (-43, 2),
+
+
+
+
+
+		(-40 , 5), (-40, 4),(-40, 3), (-40, 2),(-40, 1), (-39, 3), (-38, 3), (-39,5),(-38,5), (-38,1),(-39,1) ;
+
+	};
+
+};
+
+

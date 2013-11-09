@@ -624,7 +624,7 @@ BaseStruct* FileParser::processLifeStruct(){
         
     } //Ends while loop
 
-    if( !terrainDefined || !charsDefined || !colorsDefined || !initialDefined ){
+    if( !terrainDefined || !charsDefined || !colorsDefined ){
         throw new CustomException( CustomException::INVALID_FILE );
     }
     
@@ -681,6 +681,9 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
             
             //Add the newly found state to the mapping
             int ch = atoi( worker.getContent().c_str() );
+	    if( ch < 0 || ch >= 256 )
+	    	throw new CustomException( CustomException::INVALID_CHAR );
+
             chars.insert( std::pair< Grid::cell_state, int>( foundState, ch) );
         }
         

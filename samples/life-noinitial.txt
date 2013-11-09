@@ -1,0 +1,30 @@
+#
+# Comments, to be ignored
+#
+
+Life = 
+{
+	Name = "Hi Brandi!";
+
+	Terrain = {
+		Xrange = -55..-33;
+		Yrange
+		= -1 ..   11 ;
+	};
+
+	# Use the same window as the terrain
+	# i.e., view everything
+
+	Chars = {
+		Alive = 64; #ASCII code for @
+		Dead = 126; #ASCII code for ~
+	};
+
+	Colors = {
+		Alive = (255, 62, 150);
+		Dead = (75, 0, 130);
+	};
+
+};
+
+

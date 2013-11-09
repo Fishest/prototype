@@ -1,0 +1,24 @@
+#
+# Comments, to be ignored
+#
+
+Life = 
+{
+	Name = "Terrain Test";
+
+	# Use the same window as the terrain
+	# i.e., view everything
+
+	Chars = {
+		Alive = 5; #ASCII code for @
+		Dead = 126; #ASCII code for ~
+	};
+
+	Colors = {
+		Alive = (2, 62, 150);
+		Dead = (1, 0, 130);
+	};
+
+};
+
+

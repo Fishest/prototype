@@ -70,6 +70,7 @@ int main( int argc, char ** args ){
 			generations = atoi( args[index] );
 			if( generations < 0 ){
 				fprintf( stderr, "Must give positive number of generations.\n");
+				return 0;
 			}
 		}
 		else if( strlen( args[ index ] ) == 3 && args[index][0] == '-' && args[index][1] == 't' && args[index][2] == 'x' ){

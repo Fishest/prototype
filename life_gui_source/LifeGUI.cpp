@@ -56,12 +56,10 @@ void LifeGUI::setPixels( int pixel ){
 	if( pixel < 1 )
 		pixel = 1;
 
-	if( pixel != pixels ){
-		pixels = pixel;
-		updateImageSize();
-		update();
-		updateGeometry();
-	}
+	pixels = pixel;
+	updateImageSize();
+	update();
+	updateGeometry();
 }
 
 //Tells the QT what size the widge should be
@@ -73,6 +71,10 @@ QSize LifeGUI::sizeHint() const{
 }
 
 void LifeGUI::mousePressEvent( QMouseEvent *event ){
+	this->runGenerations( 1 );
+	updateImageSize();
+	update();
+	updateGeometry();
 }
 
 void LifeGUI::mouseMoveEvent(QMouseEvent *event){
