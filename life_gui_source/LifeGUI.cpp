@@ -138,6 +138,7 @@ void LifeGUI::setStruct( BaseStruct *newBase ){
 	if( newBase == NULL )
 		return;
 
+	//Free any memory currently allocated for the current Grid objects.
 	if( current != NULL )
 		delete current;
 	if( original != NULL )
@@ -173,8 +174,10 @@ iRuleSet* LifeGUI::getRuleSet(){
 
 void LifeGUI::runGenerations( int number ){
 
-	if( number < 0 )
-		return;
+	if( number < 0 ){
+		fprintf(stderr, "Invalid number presented as generation number.\n" );
+		exit(0);
+	}
 
 	Grid tGrid = rules->simulateGenerations( current->getGrid(), number, current->getTerrain() );
 	current->setGrid( tGrid );

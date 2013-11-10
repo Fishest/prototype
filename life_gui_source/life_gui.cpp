@@ -12,7 +12,40 @@
 #include "../common/CustomException.h"
 
 void printHelpMessage(){
-	fprintf( stderr, "Need to implement\n");
+	fprintf( stderr, "\n\nlife_gui\n");
+	fprintf( stderr, "Developer: Cameron Whipple\n");
+	fprintf( stderr, "-----------------------------------------------------------------------\n");
+	fprintf( stderr, "The life application provides a way to run simulations on differing life states.\n");
+	fprintf( stderr, "It is based on the \"Game of Life\" that was devised by John Conway in the 1970's.\n");
+	fprintf( stderr, "The simulations work by defining layout of cells within a grid. Each of these cells\n");
+	fprintf( stderr, "are provided a state, such as Dead or Alive. The program then runs through a specified\n");
+	fprintf( stderr, "number of generations in which the states of the cells are altered based on the rule set.\n");
+	fprintf( stderr, "Over the years, several different sets of rules have been derived to alter the flow of\n");
+	fprintf( stderr, "the simulations.\n\n");
+
+	fprintf( stderr, "The application is able to accept configuration information in two ways. The default method\n");
+	fprintf( stderr, "involves reading the content from the standard input stream. The second method is enabled by\n");
+	fprintf( stderr, "specifying the name of a file from the command line. An example of this is given below.\n");
+
+	fprintf( stderr, "\n\t./life_gui [switches] file1\n\n");
+
+	fprintf( stderr, "This application differs from \"life\" only in that it presents a graphical interface designed\n");
+	fprintf( stderr, "in the QT graphical framework. The life application presents the generation data in an ascii\n");
+	fprintf( stderr, "terminal. life_gui also supports the ability to step through the generations by clicking the mouse\n");
+	fprintf( stderr, "within the graphical window.\n");
+
+	fprintf( stderr, "This application supports many of the same switches as life. There are a couple of switches that\n");
+	fprintf( stderr, "are different than the life application. Specifically, the gui application supports the ability\n");
+	fprintf( stderr, "to control the size of the cells in pixels.\n Below are the available switches for life_gui.\n");
+
+	fprintf( stderr, "-g N : Specifies the number of generations that should be simulated.\n");
+	fprintf( stderr, "-s P : Specifies the number of pixels to use for each cell on the map.\n");
+	fprintf( stderr, "-h : Displays this help message\n");
+	fprintf( stderr, "-tx l..h : Specify the X values of the terrain, will override content from file.\n");
+	fprintf( stderr, "-ty l..h : Specify the Y values of the terrain, will override content from file.\n");
+	fprintf( stderr, "-wx : Controls the width of the cells that are displayed on the screen.\n");
+	fprintf( stderr, "-wy : Controls the height of the cells that are displayed on the screen.\n\n\n");
+
 	return;
 }
 
@@ -55,7 +88,11 @@ int main( int argc, char ** args ){
 				return 0;
 			}
 
-			numPixels = atoi( args[index] );
+			if( FileParser::onlyDigits( args[index] ) )
+				numPixels = atoi( args[index] );
+			else
+				numPixels = -1;
+
 			if( numPixels < 1 ){
 				fprintf( stderr, "Please choose a value of at least 1 for the number of pixels per block.\n");
 				return 0;
@@ -67,7 +104,12 @@ int main( int argc, char ** args ){
 				fprintf( stderr, "Invalid number of arguments to contain generation count.\n");
 				return 0;
 			}
-			generations = atoi( args[index] );
+
+			if( FileParser::onlyDigits( args[index] ) )
+				generations = atoi( args[index] );
+			else
+				generations = -1;
+
 			if( generations < 0 ){
 				fprintf( stderr, "Must give positive number of generations.\n");
 				return 0;
@@ -176,7 +218,7 @@ int main( int argc, char ** args ){
 		}
 
 	}catch( CustomException a ){
-		fprintf( stderr, "Error occured while parsing the file.\n");
+		a.ErrorMessage();
 		return 0;
 	}
 
@@ -194,34 +236,39 @@ int main( int argc, char ** args ){
 	 * with the values that were pulled from the arguments.
 	 */
 
-	if( terrainXOverride ){
-		grid_dimension dimen = life->getTerrain();
-		dimen.xVals = tx;
-		life->setTerrain( dimen );
-	}
+	try{
+		if( terrainXOverride ){
+			grid_dimension dimen = life->getTerrain();
+			dimen.xVals = tx;
+			life->setTerrain( dimen );
+		}
 
-	if( terrainYOverride ){
-		grid_dimension dimen = life->getTerrain();
-		dimen.yVals = ty;
-		life->setTerrain( dimen );
-	}
+		if( terrainYOverride ){
+			grid_dimension dimen = life->getTerrain();
+			dimen.yVals = ty;
+			life->setTerrain( dimen );
+		}
 
-	if( winXOverride ){
-	 	grid_dimension dimen;
-		if( life->isWinDefined() )
-			dimen = life->getWindow();
-		
-		dimen.xVals = wx;
-		life->setWindow( dimen );
-	}
+		if( winXOverride ){
+		 	grid_dimension dimen;
+			if( life->isWinDefined() )
+				dimen = life->getWindow();
+			
+			dimen.xVals = wx;
+			life->setWindow( dimen );
+		}
 
- 	if( winYOverride ){
-	 	grid_dimension dimen;
-	 	if( life->isWinDefined() )
-	 		dimen = life->getWindow();
+	 	if( winYOverride ){
+		 	grid_dimension dimen;
+		 	if( life->isWinDefined() )
+		 		dimen = life->getWindow();
 
-	 	dimen.yVals = wy;
-	 	life->setWindow( dimen );
+		 	dimen.yVals = wy;
+		 	life->setWindow( dimen );
+		}
+	} catch( CustomException a ){
+		a.ErrorMessage();
+		return 0;
 	}
 
 	gui->setStruct( base );

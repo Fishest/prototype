@@ -11,9 +11,28 @@
 #include "constants.h"
 #include "Grid.h"
 
+/**
+ * Provides an interface for classes that are able to transition a Grid from Generation N to Generation
+ * N+1. The implementing class takes care of the details on how that transformation occurs. The 
+ * existence of this interface makes it possible to quickly and easily swap out the rules being
+ * used for calcuating the next generation of cells.
+ *
+ * @author Cameron Whipple
+ * @date November 9, 2013
+ */
 class iRuleSet {
 public:
     
+    /**
+     * Once implemented in another class, the function will handle the transformation of a Grid
+     * from generation N to generation N+numGenerations. This interface allows for easily swappable
+     * rules within the application.
+     *
+     * @param live The grid from which to start simulations.
+     * @param numGenerations The number of generations that should be transformed.
+     * @param terrain The dimensions of the cells within the provided Grid that should be processed.
+     * @return Grid that corresponds to the specified number of generations being simulated.
+     */
     virtual Grid simulateGenerations( Grid live, int numGenerations, grid_dimension terrain) = 0;
     
 };

@@ -11,17 +11,14 @@
 #include "Color.h"
 #include "Point.h"
 
-struct color_case {
-    Color alive;
-    Color dead;
-};
-
+ /**
+  * Holds the bounds that are used to represent the terrain
+  * and window dimensions.
+  */
 struct grid_dimension {
     Point xVals;
     Point yVals;
 };
-
-
 
 #endif	/* CONSTANTS_H */
 

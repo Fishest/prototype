@@ -108,6 +108,17 @@ Point FileParser::parseDotRange( std::string content ){
     return values;    
 }
 
+bool FileParser::onlyDigits( char *ptr ){
+    
+    while( ptr != NULL && *ptr != 0 ){
+        if( !( (*ptr >= 48 && *ptr <= 57) || *ptr == '-' ) ){
+            return false;
+        }
+        ptr++;
+    }
+    return true;
+}
+
 
 //////////////////////////////////////////////Private Functions////////////////////////////////////////
 
@@ -745,17 +756,6 @@ std::map< Grid::cell_state, Color> FileParser::processColors(){
     
     return colors;
     
-}
-
-bool FileParser::onlyDigits( char *ptr ){
-    
-    while( ptr != NULL && *ptr != 0 ){
-        if( !( (*ptr >= 48 && *ptr <= 57) || *ptr == '-' ) ){
-            return false;
-        }
-        ptr++;
-    }
-    return true;
 }
 
 int FileParser::isInDelim( char value, char *ptr, int length ){

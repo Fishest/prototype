@@ -14,7 +14,7 @@
 #include "../common/visuals.h"
 
 void printHelpMessage(){
-	fprintf( stderr, "\n\nLife\n");
+	fprintf( stderr, "\n\nlife\n");
 	fprintf( stderr, "Developer: Cameron Whipple\n");
 	fprintf( stderr, "-----------------------------------------------------------------------\n");
 	fprintf( stderr, "The life application provides a way to run simulations on differing life states.\n");
@@ -83,9 +83,13 @@ int main( int argc, char **args ){
 				fprintf( stderr, "Invalid number of arguments to contain generation count.\n");
 				return 0;
 			}
-			generations = atoi( args[index] );
+			if( FileParser::onlyDigits( args[index] ) )
+				generations = atoi( args[index] );
+			else
+				generations = -1;
 			if( generations < 0 ){
 				fprintf( stderr, "Must give positive number of generations.\n");
+				return 0;
 			}
 		}
 		else if( strlen( args[ index ] ) == 3 && args[index][0] == '-' && args[index][1] == 't' && args[index][2] == 'x' ){
@@ -201,7 +205,7 @@ int main( int argc, char **args ){
 		}
 
 	}catch( CustomException a ){
-		fprintf( stderr, "Error occured while parsing the file.\n");
+		a.ErrorMessage();
 		return 0;
 	}
 
@@ -219,35 +223,45 @@ int main( int argc, char **args ){
 	 * with the values that were pulled from the arguments.
 	 */
 
-	 if( terrainXOverride ){
-	 	grid_dimension dimen = life->getTerrain();
-	 	dimen.xVals = tx;
-	 	life->setTerrain( dimen );
-	 }
+	 try{
 
-	 if( terrainYOverride ){
-	 	grid_dimension dimen = life->getTerrain();
-	 	dimen.yVals = ty;
-	 	life->setTerrain( dimen );
-	 }
+		 if( terrainXOverride ){
+		 	grid_dimension dimen = life->getTerrain();
+		 	dimen.xVals = tx;
+		 	life->setTerrain( dimen );
+		 }
 
-	 if( winXOverride ){
-	 	grid_dimension dimen;
-	 	if( life->isWinDefined() )
-	 		dimen = life->getWindow();
-	 	
-	 	dimen.xVals = wx;
-	 	life->setWindow( dimen );
-	 }
+		 if( terrainYOverride ){
+		 	grid_dimension dimen = life->getTerrain();
+		 	dimen.yVals = ty;
+		 	life->setTerrain( dimen );
+		 }
 
-	 if( winYOverride ){
-	 	grid_dimension dimen;
-	 	if( life->isWinDefined() )
-	 		dimen = life->getWindow();
+		 if( winXOverride ){
+		 	grid_dimension dimen;
+		 	if( life->isWinDefined() )
+		 		dimen = life->getWindow();
+		 	
+		 	dimen.xVals = wx;
+		 	life->setWindow( dimen );
+		 }
 
-	 	dimen.yVals = wy;
-	 	life->setWindow( dimen );
-	 }
+		 if( winYOverride ){
+		 	grid_dimension dimen;
+		 	if( life->isWinDefined() )
+		 		dimen = life->getWindow();
+
+		 	dimen.yVals = wy;
+		 	life->setWindow( dimen );
+		 }
+
+	} catch( CustomException a ){
+		a.ErrorMessage();
+		delete life;
+		return 0;
+	}
+
+	try{
 	 
 	/*
 	 * The next step is to run the grid through the requested number of generations.
@@ -268,6 +282,12 @@ int main( int argc, char **args ){
 	 else if( fileOutput ){
 	 	life->generateFile( stdout );
 	 }
+
+	} catch( CustomException a ){
+		a.ErrorMessage();
+		delete life;
+		return 0;
+	}
 
 	delete life;
 
