@@ -27,21 +27,29 @@ class LifeStruct : public BaseStruct {
 public:
 
     /**
-     * Creates the Life struct object. If the parameter is null then the default
-     * name should be used for creating the class.
+     * Creates the Life struct object. 
      */
     LifeStruct();
+
+	/**
+	 * Creates a LifeStruct object with a simulation name consistent with the string
+	 * that was provided as input.
+	 */
     LifeStruct(std::string name);
 
     /**
      * Implementation of the virtual function in the BaseStruct class. The function handles the 
      * exportation of a LifeStruct back to the given File.
+	 *
+	 * @param ptr File pointer that the generated content should be placed.
      */
     void generateFile( FILE *ptr );
 
     /**
      * Returns a reference to a duplicate of the LifeStruct stored on the heap. Caller takes
      * care of releasing data when finished.
+	 *
+	 * @return Pointer to the duplicate LifeStruct that was placed on the heap.
      */
     BaseStruct* duplicate();
 

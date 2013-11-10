@@ -16,7 +16,13 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 	int count = 0;
 
 	/*
-	   Scans the row directly above the given parameter.
+	   The firs series of for loops take care of adding the number of alive cells around a particular
+	   point in the Grid. Once the total count is found, the count is compared with the rules defined
+	   in the writeup to determine the next state of the cell.
+	   */
+
+	/*
+	   Scans the row directly below the given parameter.
 	   */
 	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
 		Point temp( rowIndex, pt.getSecond() - 1 );
@@ -27,7 +33,7 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 		}
 	}
 
-	//Scans the row directly below the given parameter.
+	//Scans the row directly above the given parameter.
 	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
 		Point temp( rowIndex, pt.getSecond() + 1 );
 		if( data.get( temp ) == Grid::ALIVE && temp.getFirst() >= terrain.xVals.getFirst() &&
@@ -53,6 +59,9 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 		count++;
 	}
 
+	/*
+	   Makes the determination of the cells state for the next generation
+	   */
 	if( data.get( pt ) == Grid::ALIVE ){
 		if( count < 2 )
 			return Grid::DEAD;
@@ -92,6 +101,9 @@ Grid LifeRuleSet::simulateGenerations( Grid live, int numGenerations, grid_dimen
 
 			for( colIndex = terrain.xVals.getFirst(); colIndex <= terrain.xVals.getSecond(); colIndex++ ){
 
+				/*
+				   For each cell in the terrain, the new state of that cell needs to be calculated.
+				   */
 				Point temp( colIndex, rowIndex);
 				Grid::cell_state newState = calculateNewState( past, temp, terrain);
 

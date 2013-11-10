@@ -32,7 +32,9 @@ int Color::getRed(){
 }
 
 std::string Color::toString(){
-    
+
+	//Builds a string that represents the format that the color
+	//object should follow when provided in the configuration file.
     char temp[100];
     sprintf( temp, "( %d, %d, %d)", redValue, greenValue, blueValue);
     

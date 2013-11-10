@@ -6,6 +6,11 @@ CustomException::CustomException(ErrorCode errorCode) {
 
 const char* CustomException::ErrorMessage() const throw () {
 
+	/*
+	   Prints an error message consisten with the problem that was encountered
+	   during the programs execution.
+	   */
+
     if (code == INVALID_MAPPING) {
         std::cerr << "Unable to find mapping to cell state.\n";
     } else if (code == INVALID_FILE) {

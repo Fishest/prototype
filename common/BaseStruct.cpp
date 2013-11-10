@@ -7,6 +7,7 @@
 using namespace std;
 
 BaseStruct::BaseStruct( StructType type ){
+	init();
     this->type = type;
     std::string temp;
     this->name = temp;
@@ -14,6 +15,7 @@ BaseStruct::BaseStruct( StructType type ){
 }
 
 BaseStruct::BaseStruct(StructType type, std::string name){
+	init();
     this->type = type;
     this->name = name;
     winDefined = false;
@@ -26,6 +28,9 @@ void BaseStruct::init(){
     type = BaseStruct::UNKOWN;
     name.clear();
     data.reset( Grid::DEAD );
+
+	terrain.xVals.reset();
+	terrain.yVals.reset();
     
     window.xVals.reset();
     window.yVals.reset();
@@ -38,7 +43,11 @@ void BaseStruct::init(){
 int BaseStruct::getChar(Grid::cell_state value){
     
     std::map< Grid::cell_state, int>::iterator it;
-    
+   
+	/*
+	   Locates the character code for the provided cell_state
+	   value.
+	   */
     it = charMap.find( value );
     if( it != charMap.end() ){
         return (char)( 0x000000ff & it->second );
@@ -52,11 +61,15 @@ int BaseStruct::getChar(Grid::cell_state value){
 Color BaseStruct::getColor(Grid::cell_state value){
     
     std::map< Grid::cell_state, Color>::iterator it;
-    
+   
+	/*
+	   Finds the color for the specified cell_state
+	   */
     it = colorMap.find( value );
     if( it != colorMap.end() )
         return it->second;
     else
+		//No mapping was available.
         throw new CustomException( CustomException::INVALID_MAPPING );
 }
 
@@ -77,6 +90,12 @@ BaseStruct::StructType BaseStruct::getType(){
 }
 
 grid_dimension BaseStruct::getWindow(){
+	/*
+	   The window should be the same as the terrain
+	   until it has been explicitly defined. The following
+	   if statement makes the determination of which case
+	   to take.
+	   */
     if( winDefined )
         return window;
     else
@@ -103,7 +122,12 @@ void BaseStruct::setTerrain( grid_dimension dimen ){
 void BaseStruct::setChar(Grid::cell_state state, int value){
     
     std::map< Grid::cell_state, int>::iterator it;
-    
+   
+	/*
+	   Attempts to find the specified state in the character mapping. If there is a 
+	   mapping that already exists then it will be upated. If the mapping doesn't
+	   already exist then it needs to be created.
+	   */
     it = charMap.find( state );
     if( it != charMap.end() ){
         
@@ -120,12 +144,19 @@ void BaseStruct::setChar(Grid::cell_state state, int value){
 void BaseStruct::setColor(Grid::cell_state state, Color val){
     
     std::map< Grid::cell_state, Color >::iterator it;
-    
+
+    /*
+	   Attempts to find the specified state in the color mapping. If there is a 
+	   mapping that already exists then it will be upated. If the mapping doesn't
+	   already exist then it needs to be created.
+	   */
     it = colorMap.find( state );
     if( it != colorMap.end() ){
+		//Swap the value of the current mapping
         it->second = val;
     }
     else{
+		//Add a new mapping for the state
         colorMap.insert( std::pair< Grid::cell_state, Color>( state, val) );
     }
 }

@@ -65,15 +65,24 @@ grid_dimension Grid::getTerrain(){
     int maxX = 0;
     int minY = 0;
     int maxY = 0;
+
+	/*
+	   Loops through all the cells in the map that have been changed from the
+	   default value. With each of these cells, the point locations are compared
+	   against the current max and min values. By the end of the altered cells, it
+	   will be known what the upper and lower bounds of the altered cells are within
+	   the Grid.
+	   */
     
     std::map< Point, Grid::cell_state >::iterator it = data.begin();
     while( it != data.end() ){
         
         Point temp = it->first;
-        
-        if( temp.getFirst() < minX ){
+       
+		//Determines if the current max or min needs to be updated
+		//according to the new found location.
+        if( temp.getFirst() < minX )
             minX = temp.getFirst();
-        }
         if( temp.getFirst() > maxX )
             maxX = temp.getFirst();
         if( temp.getSecond() < minY )
@@ -83,6 +92,9 @@ grid_dimension Grid::getTerrain(){
         
         it++;
     }
+
+	//Creates the grid_dimension struct that will be returned
+	//containing the bounds of the altered cells.
     
     grid_dimension temp;
     Point pt(minX, maxX);

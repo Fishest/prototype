@@ -10,12 +10,17 @@ LifeStruct::LifeStruct() : BaseStruct( BaseStruct::LIFE ){
 
 LifeStruct::LifeStruct(std::string name) : BaseStruct( BaseStruct::LIFE, name ){
     //This is just an empty shell for the time being.
-    	Grid grid( Grid::DEAD );
+   	Grid grid( Grid::DEAD );
 	this->setGrid( grid );
 
 }
 
 void LifeStruct::generateFile( FILE *ptr ){
+
+	/*
+	   This function handles the converting of the Structs content to a compatible file format. The conversion
+	   is performed through the use of the fprintf function.
+	   */
 
 	unsigned int index = 0;
 
@@ -41,15 +46,18 @@ void LifeStruct::generateFile( FILE *ptr ){
 	Color alive = this->getColor( Grid::ALIVE );
 	Color dead = this->getColor( Grid::DEAD );
 	fprintf( ptr, "\tColors = {\n");
-	fprintf( ptr, "\t\tAlive = (%d,%d,%d);\n", alive.getRed(), alive.getGreen(), alive.getBlue() );
-	fprintf( ptr, "\t\tDead = (%d,%d,%d);\n", dead.getRed(), dead.getGreen(), dead.getBlue() );
+	//fprintf( ptr, "\t\tAlive = (%d,%d,%d);\n", alive.getRed(), alive.getGreen(), alive.getBlue() );
+	//fprintf( ptr, "\t\tDead = (%d,%d,%d);\n", dead.getRed(), dead.getGreen(), dead.getBlue() );
+	fprintf( ptr, "\t\tAlive = %s;\n", alive.toString().c_str() );
+	fprintf( ptr, "\t\tDead = %s;\n", dead.toString().c_str() );
 	fprintf( ptr, "\t};\n");
 
 	std::vector< Point > vec = this->getGrid().getAllWithState( Grid::ALIVE );
 	fprintf( ptr, "\tInitial = {\n");
 	fprintf( ptr, "\t\tAlive = ");
 	for( index = 0; index < vec.size(); index++ ){
-		fprintf( ptr, "(%d,%d)", vec.at( index ).getFirst(), vec.at( index ).getSecond() );
+		//fprintf( ptr, "(%d,%d)", vec.at( index ).getFirst(), vec.at( index ).getSecond() );
+		fprintf( ptr, "%s", vec.at( index ).toString().c_str() );
 		if( index < vec.size() - 1)
 			fprintf( ptr, ",");
 		else

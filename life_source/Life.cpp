@@ -68,6 +68,9 @@ int main( int argc, char **args ){
 
 	FILE *input = NULL;
 
+	/*
+	   Process the arguments from the command line. The argument may alter the flow of the program or how it's presented
+	  */
 	while( index < argc ){
 
 		if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 'h' ){

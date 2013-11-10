@@ -28,9 +28,22 @@ FileParser::~FileParser(){
 }
 
 BaseStruct* FileParser::getNext(){
+
+	/*
+	   The FileParser looks at the file as a series of structs followed by each other. For instance,
+	   there might be a Life struct as well as a WireFrame struct among others. With this being the case,
+	   the getNext function will grab and parse the next large struct, such as Life, from the file and 
+	   return a reference to it. This design allows for more controlled processing of the configuration
+	   file. It also allows for less memory usage than if the application were to process all the structs
+	   in the file at the same time.
+
+	   This follows the design of the Scanner class from java language.
+	   */
     
     if( hasNext() ){
         if( state == FileParser::LIFE_START ){
+
+			//The next Token is a Life struct and needs to be processed according.
             return processLifeStruct();
         }
         else{
@@ -43,7 +56,11 @@ BaseStruct* FileParser::getNext(){
 }
 
 bool FileParser::hasNext(){
-    
+
+	/*
+	   Determines if there is another struct in the input file that needs to be processed
+	   within the file.
+	   */
     Token tok;
     
     if( state == FileParser::LIFE_START ){
@@ -80,11 +97,19 @@ Point FileParser::parseDotRange( std::string content ){
     char buffer[length + 1];
     bzero( buffer, length + 1 );
     
+	/*
+	   Copies the string content into a character buffer that can
+	   then be used with the strtok function.
+	   */
     int index = 0;
     for( index= 0; index < length; index++) {
         buffer[index] = content.at( index );
     }
 
+	/*
+	   The following code handles breaking apart the string by splitting it
+	   based on the ".." delimiter. The values are then converted to an integer.
+	   */
     ptr = strtok( buffer, "..");
     if( ptr !=  NULL && FileParser::onlyDigits( ptr ) ){
         values.setFirst( atoi( ptr ) );
@@ -109,7 +134,11 @@ Point FileParser::parseDotRange( std::string content ){
 }
 
 bool FileParser::onlyDigits( char *ptr ){
-    
+   
+	/*
+	   Scans through the pointer to make sure that only the negative sign and numbers
+	   are present within the given buffer.
+	   */
     while( ptr != NULL && *ptr != 0 ){
         if( !( (*ptr >= 48 && *ptr <= 57) || *ptr == '-' ) ){
             return false;
@@ -317,7 +346,7 @@ Color FileParser::parseColor(std::string content){
             
             /*
              * If the current character is a comma then it's time to break apart and parse the content
-             * within the buffer.
+             * within the buffer. Also need to break when the closing parenthesis is seen.
              */
             if( content[index] == ',' || content[index] == ')' ){
                 
@@ -470,6 +499,10 @@ Grid FileParser::processInititalLayout( ){
     int state = 0;
     
     /*
+	 * The intital layout is processed around a finite state machine, like most processing. The methods
+	 * of processing the found content differ depending on the current state of the application. The 
+	 * states are outlined below in what each one refers to.
+	 *
      * ZERO
      * Haven't found a state header as of yet. Need to find the header prior to 
      * processing point.
@@ -583,6 +616,14 @@ BaseStruct* FileParser::processLifeStruct(){
     bool colorsDefined = false;
     bool initialDefined = false;
 
+	/*
+	   Processing the Life Struct is done through the use of a finite state machine. Based on the returned
+	   token and the current state, the application knows how to handle the processing of the next section
+	   in the configuration file. The getNextToken function allows for a extendable and simple processing of
+	   the input file. It will automatically remove commented lines and white space when it's not necessary
+	   to keep it present.
+	   */
+
     LifeStruct *life = new LifeStruct();
     
     Token tok = getNextToken( "{", 1);
@@ -591,50 +632,76 @@ BaseStruct* FileParser::processLifeStruct(){
     while( tok.getMatachedDelim() != '}' ){
         
         if( state == FileParser::LIFE_START && tok.getMatachedDelim() == '=' ){
-            //Found a value header
-           
+          
+			/*
+			   At this point, a header value has been found from the getNextToken function. The next
+			   step is to determine which type struct the header was for. Once that is determined, the
+			   program will continue by calling the appropriate processing function to obtain the
+			   value portion of the header that was found.
+			   */
             if( tok.getContent().find( "Name" ) != tok.getContent().npos ){
+
+				//Found the optional name header
                 tok = getNextToken(";", 1);
                  life->setName( tok.getContent() );
                  state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Terrain" ) != tok.getContent().npos ){
+
+				//Found the Terrain portion of the configuration file
                 grid_dimension dimen = processTerrain();
                 life->setTerrain( dimen );
                 terrainDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Window" ) != tok.getContent().npos ){
+
+				//Found the optional Window parameter of the configuration file. The
+				//window value format is consisten with the terrain and thus the same
+				//processing function is used.
                 grid_dimension dimen = processTerrain();
                 life->setWindow( dimen );
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Chars" ) != tok.getContent().npos ){
+
+				//Character map has been found within the file.
                 std::map< Grid::cell_state, int > temp = processChars();
                 life->setCharMap( temp );
                 charsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Colors" ) != tok.getContent().npos ){
+
+				//Color map has been found within the file.
                 std::map< Grid::cell_state, Color> temp = processColors();
                 life->setColorMap( temp );
                 colorsDefined = true;
                 state = FileParser::LIFE_START;
             }
             else if( tok.getContent().find( "Initial" ) != tok.getContent().npos ){
+
+				//The initial layout section has been found.
                 Grid temp = processInititalLayout();
                 life->setGrid( temp );
                 initialDefined = true;
                 state = FileParser::LIFE_START;
             }
         }
-        
+       
+		/*
+		   Need to grab the next section of the files content up to either an '=' or a '}' character
+		   is found. In the event that an '}' is found, the end of the Life Struct has been found.
+		   */
         if( state == FileParser::LIFE_START ){
                 tok = getNextToken( "=}", 2);
-            }
+        }
         
     } //Ends while loop
 
+	/*
+	   Make sure that all the required sections have been defined.
+	   */
     if( !terrainDefined || !charsDefined || !colorsDefined ){
         throw new CustomException( CustomException::INVALID_FILE );
     }
@@ -666,9 +733,6 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
             break;            
         }
         else if( state == 0 && worker.getMatachedDelim() == '=' ){
-            //TODO Determine if having multiple Alive or Dead declarations within the color struct will
-            //just overwrite he previously seen value.
-            
             /*
              * About ready to process the next header
              */
@@ -692,11 +756,12 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
             
             //Add the newly found state to the mapping
             int ch = atoi( worker.getContent().c_str() );
-	    if( ch < 0 || ch >= 256 )
-	    	throw new CustomException( CustomException::INVALID_CHAR );
+			if( ch < 0 || ch >= 256 )
+				throw new CustomException( CustomException::INVALID_CHAR );
 
-            chars.insert( std::pair< Grid::cell_state, int>( foundState, ch) );
-        }
+			//Adds the new character code into the mapping
+			chars.insert( std::pair< Grid::cell_state, int>( foundState, ch) );
+		}
         
         
     }// ends while loop
