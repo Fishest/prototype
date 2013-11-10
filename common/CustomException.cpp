@@ -11,22 +11,22 @@ const char* CustomException::ErrorMessage() const throw () {
 	   during the programs execution.
 	   */
 
-    if (code == INVALID_MAPPING) {
-        std::cerr << "Unable to find mapping to cell state.\n";
-    } else if (code == INVALID_FILE) {
-        std::cerr << "Provided file doesn't follow proper file format.\n";
-    } else if (code == NULL_PARAMETER)
-        std::cerr << "Invalid parameter passed to the function.\n";
-    else if( code == INVALID_FILENAME )
-    	std::cerr << "Provided filename doesn't correspond to a proper file.\n";
-    else if( code == NOT_ENOUGH_BUFFER_FOR_TOKEN )
-    	std::cerr << "Not enough memory available on system for processing file.\n";
-    else if( code == INVALID_COLOR )
-    	std::cerr << "Invalid formatted color object in specified file.\n");
+	if (code == INVALID_MAPPING) 
+		std::cerr << "Unable to find mapping to cell state.\n";
+	else if (code == INVALID_FILE) 
+		std::cerr << "Provided file doesn't follow proper file format.\n";
+	else if (code == NULL_PARAMETER)
+		std::cerr << "Invalid parameter passed to the function.\n";
+	else if( code == INVALID_FILENAME )
+		std::cerr << "Provided filename doesn't correspond to a proper file.\n";
+	else if( code == NOT_ENOUGH_BUFFER_FOR_TOKEN )
+		std::cerr << "Not enough memory available on system for processing file.\n";
+	else if( code == INVALID_COLOR )
+		std::cerr << "Invalid formatted color object in specified file.\n";
 	else if( code == INVALID_POINT )
-		std::cerr << "Invalid point was ran across throughout the application.\n");
+		std::cerr << "Invalid point was ran across throughout the application.\n";
 	else if( code == INVALID_TERRAIN_WINDOW )
-		std::cerr << "Specified terrain doesn't follow proper formatting.\n");
+		std::cerr << "Specified terrain doesn't follow proper formatting.\n";
 	else if( code == INVALID_RANGE )
 		std::cerr << "Invalid set of ranges provided in configuration file or command line.\n";
 	else if( code == INVALID_COLOR_STRUCT )
