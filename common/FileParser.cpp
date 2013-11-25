@@ -673,6 +673,24 @@ void FileParser::processStruct( BaseStruct *base ){
                 initialDefined = true;
                 state = FileParser::STRUCT_START;
             }
+			else if( tok.getContent().find( "Rule" ) != tok.getContent().npos ){
+
+				tok = getNextToken( ";", 1 );
+				int value = atoi( tok.getContent().c_str() );
+				if( value < 0 || value >= 512 ){
+					throw new CustomException( CustomException::INVALID_RULE_VALUE );
+				}
+
+				if( base->getType() != BaseStruct::ELEMENTARY )
+				{
+					throw new CustomException( CustomException::INVALID_STRUCT_TYPE );
+				}
+
+				ElementaryStruct * el = (ElementaryStruct*) base;
+				el->setRule( value );
+
+				state = FileParser::STRUCT_START;
+			}
         }
        
 		/*
@@ -694,111 +712,6 @@ void FileParser::processStruct( BaseStruct *base ){
     
     //Get rid of trailing semi-colon
     getNextToken( ";" , 1);
-}
-
-BaseStruct* FileParser::processLifeStruct(){
-    
-    defaultState = Grid::DEAD;
-
-    bool terrainDefined = false;
-    bool charsDefined = false;
-    bool colorsDefined = false;
-    bool initialDefined = false;
-
-	/*
-	   Processing the Life Struct is done through the use of a finite state machine. Based on the returned
-	   token and the current state, the application knows how to handle the processing of the next section
-	   in the configuration file. The getNextToken function allows for a extendable and simple processing of
-	   the input file. It will automatically remove commented lines and white space when it's not necessary
-	   to keep it present.
-	   */
-
-    LifeStruct *life = new LifeStruct();
-    
-    Token tok = getNextToken( "{", 1);
-    ParseState state = FileParser::LIFE_START;
-    
-    while( tok.getMatachedDelim() != '}' ){
-        
-        if( state == FileParser::LIFE_START && tok.getMatachedDelim() == '=' ){
-          
-			/*
-			   At this point, a header value has been found from the getNextToken function. The next
-			   step is to determine which type struct the header was for. Once that is determined, the
-			   program will continue by calling the appropriate processing function to obtain the
-			   value portion of the header that was found.
-			   */
-            if( tok.getContent().find( "Name" ) != tok.getContent().npos ){
-
-				//Found the optional name header
-                tok = getNextToken(";", 1);
-                 life->setName( tok.getContent() );
-                 state = FileParser::LIFE_START;
-            }
-            else if( tok.getContent().find( "Terrain" ) != tok.getContent().npos ){
-
-				//Found the Terrain portion of the configuration file
-                grid_dimension dimen = processTerrain();
-                life->setTerrain( dimen );
-                terrainDefined = true;
-                state = FileParser::LIFE_START;
-            }
-            else if( tok.getContent().find( "Window" ) != tok.getContent().npos ){
-
-				//Found the optional Window parameter of the configuration file. The
-				//window value format is consisten with the terrain and thus the same
-				//processing function is used.
-                grid_dimension dimen = processTerrain();
-                life->setWindow( dimen );
-                state = FileParser::LIFE_START;
-            }
-            else if( tok.getContent().find( "Chars" ) != tok.getContent().npos ){
-
-				//Character map has been found within the file.
-                std::map< Grid::cell_state, int > temp = processChars();
-                life->setCharMap( temp );
-                charsDefined = true;
-                state = FileParser::LIFE_START;
-            }
-            else if( tok.getContent().find( "Colors" ) != tok.getContent().npos ){
-
-				//Color map has been found within the file.
-                std::map< Grid::cell_state, Color> temp = processColors();
-                life->setColorMap( temp );
-                colorsDefined = true;
-                state = FileParser::LIFE_START;
-            }
-            else if( tok.getContent().find( "Initial" ) != tok.getContent().npos ){
-
-				//The initial layout section has been found.
-                Grid temp = processInititalLayout();
-                life->setGrid( temp );
-                initialDefined = true;
-                state = FileParser::LIFE_START;
-            }
-        }
-       
-		/*
-		   Need to grab the next section of the files content up to either an '=' or a '}' character
-		   is found. In the event that an '}' is found, the end of the Life Struct has been found.
-		   */
-        if( state == FileParser::LIFE_START ){
-                tok = getNextToken( "=}", 2);
-        }
-        
-    } //Ends while loop
-
-	/*
-	   Make sure that all the required sections have been defined.
-	   */
-    if( !terrainDefined || !charsDefined || !colorsDefined ){
-        throw new CustomException( CustomException::INVALID_FILE );
-    }
-    
-    //Get rid of trailing semi-colon
-    getNextToken( ";" , 1);
-    
-    return life;  
 }
 
 std::map< Grid::cell_state, int> FileParser::processChars(){

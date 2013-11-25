@@ -34,6 +34,7 @@ public:
         NO_NEXT_STRUCT,
 		NEGATIVE_GENERATIONS,
 		INVALID_CHAR,
+		INVALID_STRUCT_TYPE,
 		INVALID_TYPE_FOR_SIMULATION,/*Refers to a non elementary struct being provided to elementary rule set*/
 		INVALID_RULE_VALUE, /*Value pulled for the Rule isn't valid*/
 		NOT_IMPLEMENTED_YET//Used when a function hasn't been implemented yet.
