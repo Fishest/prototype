@@ -15,6 +15,7 @@
 #include "Color.h"
 #include "Point.h"
 #include "constants.h"
+#include "Grid.h"
 
 /**
  * Implementation of the BaseStruct that is specific for the Life structs that are defined in the
@@ -53,6 +54,9 @@ public:
      */
     BaseStruct* duplicate();
 
+	Grid::cell_state getDefaultState();
+
+	iRuletSet* getDefaultRuleSet();
 
 private:
 

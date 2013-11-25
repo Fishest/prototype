@@ -39,16 +39,12 @@ BaseStruct* FileParser::getNext(){
 
 	   This follows the design of the Scanner class from java language.
 	   */
-    
-    if( hasNext() ){
-        if( state == FileParser::LIFE_START ){
 
-			//The next Token is a Life struct and needs to be processed according.
-            return processLifeStruct();
-        }
-        else{
-            throw new CustomException( CustomException::NO_NEXT_STRUCT );
-        }
+    if( hasNext() ){
+		processStruct( base );
+		BaseStruct *temp = base;
+		base = NULL;
+		return temp;
     }
     else{
         throw new CustomException( CustomException::NO_NEXT_STRUCT );
@@ -63,16 +59,23 @@ bool FileParser::hasNext(){
 	   */
     Token tok;
     
-    if( state == FileParser::LIFE_START ){
+    if( base != NULL ){
         return true;
     }
     
     try{
         tok = getNextToken( "=", 1);
         if( tok.getContent().find( "Life" ) != tok.getContent().npos ){
-            state = FileParser::LIFE_START;
+			base = new LifeStruct();
         }
+		else if( tok.getContent().find( "WireWorld" ) != tok.getContent().npos ){
+			base = new WireWorldStruct();
+		}
+		else if( tok.getContent().find( "Elementary" ) != tok.getContent().npos ){
+			base = new ElementaryStruct();
+		}
         else{
+			base = NULL;
             return false;
         }
         return true;
@@ -518,18 +521,10 @@ Grid FileParser::processInititalLayout( ){
         if( state == 0 && tok.getMatachedDelim() == '=' ){
             //Found the header to be working with.
             state = 1;
-            
-            //Map the read content to a defined state value.
-            if( tok.getContent().find( "Alive" ) != tok.getContent().npos ){
-                currentState = Grid::ALIVE;
-            }
-            else if( tok.getContent().find( "Dead" ) != tok.getContent().npos ){
-                currentState = Grid::DEAD;
-            }
-            else{
-                throw new CustomException( CustomException::INVALID_CELL_STATE_FOUND );
-            }
-            
+
+			//Map the read content to a defined state value
+			currentState = Grid::convertState( tok.getContent() );
+                       
         }
         else if( state == 1 && ( tok.getMatachedDelim() == ',' || tok.getMatachedDelim() == ';' ) ){
             //Found another point in the file that needs to be processed and added to the map.
@@ -605,6 +600,100 @@ grid_dimension FileParser::processTerrain(){
     getNextToken(";", 1);
     
     return grid;
+}
+
+void FileParser::processStruct( BaseStruct *base ){
+
+	//Obtain the default state from the underlying struct
+	defaultState = base->getDefaultState();
+
+    bool terrainDefined = false;
+    bool charsDefined = false;
+    bool colorsDefined = false;
+    bool initialDefined = false;
+
+    Token tok = getNextToken( "{", 1);
+    ParseState state = FileParser::LIFE_START;
+    
+    while( tok.getMatachedDelim() != '}' ){
+        
+        if( state == FileParser::STRUCT_START && tok.getMatachedDelim() == '=' ){
+          
+			/*
+			   At this point, a header value has been found from the getNextToken function. The next
+			   step is to determine which type struct the header was for. Once that is determined, the
+			   program will continue by calling the appropriate processing function to obtain the
+			   value portion of the header that was found.
+			   */
+            if( tok.getContent().find( "Name" ) != tok.getContent().npos ){
+
+				//Found the optional name header
+                tok = getNextToken(";", 1);
+                 base->setName( tok.getContent() );
+                 state = FileParser::STRUCT_START;
+            }
+            else if( tok.getContent().find( "Terrain" ) != tok.getContent().npos ){
+
+				//Found the Terrain portion of the configuration file
+                grid_dimension dimen = processTerrain();
+                base->setTerrain( dimen );
+                terrainDefined = true;
+                state = FileParser::STRUCT_START;
+            }
+            else if( tok.getContent().find( "Window" ) != tok.getContent().npos ){
+
+				//Found the optional Window parameter of the configuration file. The
+				//window value format is consisten with the terrain and thus the same
+				//processing function is used.
+                grid_dimension dimen = processTerrain();
+                base->setWindow( dimen );
+                state = FileParser::STRUCT_START;
+            }
+            else if( tok.getContent().find( "Chars" ) != tok.getContent().npos ){
+
+				//Character map has been found within the file.
+                std::map< Grid::cell_state, int > temp = processChars();
+                base->setCharMap( temp );
+                charsDefined = true;
+                state = FileParser::STRUCT_START;
+            }
+            else if( tok.getContent().find( "Colors" ) != tok.getContent().npos ){
+
+				//Color map has been found within the file.
+                std::map< Grid::cell_state, Color> temp = processColors();
+                base->setColorMap( temp );
+                colorsDefined = true;
+                state = FileParser::STRUCT_START;
+            }
+            else if( tok.getContent().find( "Initial" ) != tok.getContent().npos ){
+
+				//The initial layout section has been found.
+                Grid temp = processInititalLayout();
+                base->setGrid( temp );
+                initialDefined = true;
+                state = FileParser::STRUCT_START;
+            }
+        }
+       
+		/*
+		   Need to grab the next section of the files content up to either an '=' or a '}' character
+		   is found. In the event that an '}' is found, the end of the Life Struct has been found.
+		   */
+        if( state == FileParser::STRUCT_START ){
+                tok = getNextToken( "=}", 2);
+        }
+        
+    } //Ends while loop
+
+	/*
+	   Make sure that all the required sections have been defined.
+	   */
+    if( !terrainDefined || !charsDefined || !colorsDefined ){
+        throw new CustomException( CustomException::INVALID_FILE );
+    }
+    
+    //Get rid of trailing semi-colon
+    getNextToken( ";" , 1);
 }
 
 BaseStruct* FileParser::processLifeStruct(){
@@ -740,12 +829,7 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
             
             //Map the string representation of the state to the enum.
             //Note: This could potentially be redone to use abstraction among classes for autodetection of support.
-            if( worker.getContent().find("Alive") != worker.getContent().npos ){
-                foundState = Grid::ALIVE;
-            }
-            else if( worker.getContent().find("Dead") != worker.getContent().npos ){
-                foundState = Grid::DEAD;
-            }
+			foundState = Grid::convertState( worker.getContent() );
             
         }
         else if( state == 1 && worker.getMatachedDelim() == ';' ){
@@ -790,14 +874,8 @@ std::map< Grid::cell_state, Color> FileParser::processColors(){
         }
         else if( state == 0 && tok.getMatachedDelim() == '='){
             //A header was found.
-            if( tok.getContent().find("Alive") != tok.getContent().npos ){
-                stateHeader = Grid::ALIVE;
-                state = 1;
-            }
-            else if( tok.getContent().find( "Dead" ) != tok.getContent().npos ){
-                stateHeader = Grid::DEAD;
-                state = 1;
-            }
+ 			state = 1;
+			stateHeader = Grid::convertState( tok.getContent() );
         }
         else if( state == 1 && tok.getMatachedDelim() == ';' ){
             value = parseColor( tok.getContent() );

@@ -28,12 +28,12 @@ public:
      * from generation N to generation N+numGenerations. This interface allows for easily swappable
      * rules within the application.
      *
-     * @param live The grid from which to start simulations.
+     * @param base Reference to the Struct that contains the data for start of simulations. 
      * @param numGenerations The number of generations that should be transformed.
      * @param terrain The dimensions of the cells within the provided Grid that should be processed.
      * @return Grid that corresponds to the specified number of generations being simulated.
      */
-    virtual Grid simulateGenerations( Grid live, int numGenerations, grid_dimension terrain) = 0;
+    virtual Grid simulateGenerations( BaseStruct *base, int numGenerations, grid_dimension terrain) = 0;
     
 };
 

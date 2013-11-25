@@ -46,8 +46,6 @@ void LifeStruct::generateFile( FILE *ptr ){
 	Color alive = this->getColor( Grid::ALIVE );
 	Color dead = this->getColor( Grid::DEAD );
 	fprintf( ptr, "\tColors = {\n");
-	//fprintf( ptr, "\t\tAlive = (%d,%d,%d);\n", alive.getRed(), alive.getGreen(), alive.getBlue() );
-	//fprintf( ptr, "\t\tDead = (%d,%d,%d);\n", dead.getRed(), dead.getGreen(), dead.getBlue() );
 	fprintf( ptr, "\t\tAlive = %s;\n", alive.toString().c_str() );
 	fprintf( ptr, "\t\tDead = %s;\n", dead.toString().c_str() );
 	fprintf( ptr, "\t};\n");
@@ -82,3 +80,14 @@ BaseStruct* LifeStruct::duplicate(){
 
 	return (BaseStruct*)life;
 }
+
+Grid::cell_state LifeStruct::getDefaultState(){
+	return Grid::DEAD;
+}
+
+iRuleSet* LifeStruct::getDefaultRuleSet(){
+	LifeRuleSet *life = new LifeRuleSet();
+	return (*iRuleSet)life;
+}
+
+

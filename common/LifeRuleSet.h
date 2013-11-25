@@ -5,6 +5,7 @@
 #include "Grid.h"
 #include "Point.h"
 #include "iRuleSet.h"
+#include "BaseStruct.h"
 
 /**
  * Implementation of the iRuleSet interface that corresponds to the Life struct rules as defined in
@@ -28,7 +29,7 @@ class LifeRuleSet : public iRuleSet {
 		 * @param terrain The terrain of the Grid that should be processed
 		 * @return the updated version of the Grid
 		 */
-		virtual Grid simulateGenerations( Grid live, int numGenerations, grid_dimension terrain);
+		virtual Grid simulateGenerations( BaseStruct *base, int numGenerations, grid_dimension terrain);
 
 	private:
 

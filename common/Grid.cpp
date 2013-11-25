@@ -8,6 +8,8 @@
 
 using namespace std;
 
+
+
 Grid::Grid(){
     this->defaultState = Grid::DEAD;
     init();
@@ -36,6 +38,88 @@ Grid::cell_state Grid::get( Point dimen ){
          */
         return defaultState;
     }
+}
+
+Grid::cell_state static Grid::convertState( string content ){
+
+	if( content.find( "Alive" ) != content.npos ){
+		return Grid::ALIVE;
+	}
+	else if( content.find( "Dead" ) != content.npos ){
+		return Grid::DEAD;
+	}
+	else if( content.find( "Empty" ) != content.npos ){
+		return Grid::EMPTY;
+	}
+	else if( content.find( "Head" ) != content.npos ){
+		return Grid::ELECTRON_HEAD;
+	}
+	else if( content.find( "Tail" ) != content.npos ){
+		return Grid::ELECTRON_TAIL;
+	}
+	else if( content.find( "Wire" ) != content.npos ){
+		return Grid::WIRE;
+	}
+	else if( content.find( "Zero" ) != content.npos ){
+		return Grid::ZERO;
+	}
+	else if( content.find( "One" ) != content.npos ){
+		return Grid::ONE;
+	}
+	else{
+	throw new CustomException( CustomException::INVALID_FILE );
+	}
+}
+
+int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt ){
+	int rowIndex = 0;
+	int count = 0;
+
+	/*
+	   The firs series of for loops take care of adding the number of alive cells around a particular
+	   point in the Grid. Once the total count is found, the count is compared with the rules defined
+	   in the writeup to determine the next state of the cell.
+	   */
+
+	/*
+	   Scans the row directly below the given parameter.
+	   */
+	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
+		Point temp( rowIndex, pt.getSecond() - 1 );
+		if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+				temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
+					temp.getSecond() <= terrain.yVals.getSecond() ){
+			count++;
+		}
+	}
+
+	//Scans the row directly above the given parameter.
+	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
+		Point temp( rowIndex, pt.getSecond() + 1 );
+		if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+				temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
+					temp.getSecond() <= terrain.yVals.getSecond() ){
+			count++;
+		}
+	}
+
+	//Checks cell to the left of the given point.
+	Point temp( pt.getFirst() - 1, pt.getSecond() );
+	if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+			temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
+				temp.getSecond() <= terrain.yVals.getSecond() ){
+		count++;
+	}
+
+	//Checks cell to the left of the given point.
+	Point temp1( pt.getFirst() + 1, pt.getSecond() );
+	if( data.get( temp1 ) == state && temp1.getFirst() >= terrain.xVals.getFirst() &&
+			temp1.getFirst() <= terrain.xVals.getSecond() && temp1.getSecond() >= terrain.yVals.getFirst() &&
+				temp1.getSecond() <= terrain.yVals.getSecond() ){
+		count++;
+	}
+
+	return count;
 }
 
 std::vector< Point > Grid::getAllWithState( Grid::cell_state val ){

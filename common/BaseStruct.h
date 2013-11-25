@@ -35,7 +35,7 @@ public:
      * struct types as a new entry will just be added to this enum.
      */
     enum StructType {
-        LIFE, UNKOWN
+        LIFE, UNKOWN, WIREWORLD, ELEMENTARY
     };
 
     BaseStruct( StructType type );
@@ -195,6 +195,10 @@ public:
      * @return Pointer to the BaseStruct on the heap that is a result of the duplication.
      */
     virtual BaseStruct* duplicate() = 0;
+
+	virtual Grid::cell_state getDefaultState() = 0;
+
+	virtual iRuletSet* getDefaultRuleSet() = 0;
     
 private:
     void init();

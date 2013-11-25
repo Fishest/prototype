@@ -32,8 +32,11 @@ public:
         INVALID_CELL_STATE_FOUND /*During processing, a state was found that isn't currently defined in application*/,
         PREMATURE_EOF,
         NO_NEXT_STRUCT,
-	NEGATIVE_GENERATIONS,
-	INVALID_CHAR
+		NEGATIVE_GENERATIONS,
+		INVALID_CHAR,
+		INVALID_TYPE_FOR_SIMULATION,/*Refers to a non elementary struct being provided to elementary rule set*/
+		INVALID_RULE_VALUE, /*Value pulled for the Rule isn't valid*/
+		NOT_IMPLEMENTED_YET//Used when a function hasn't been implemented yet.
                 
     };
 

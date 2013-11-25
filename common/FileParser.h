@@ -70,12 +70,13 @@ public:
 private:
 
     enum ParseState {
-        NOTHING, START, DONE, LIFE_START
+        NOTHING, START, DONE, STRUCT_START
     };
 
     FILE *input;
     ParseState state;
     Grid::cell_state defaultState;
+	BaseStruct *base;
 
     /**
      * This FileParser works by using a custom built tokenizer for the file.
@@ -120,6 +121,8 @@ private:
      * @return Pointer to the LifeStruct on the heap that contains the information from the struct.
      */
     BaseStruct* processLifeStruct();
+
+	void processStruct( BaseStruct *base );
 
     /**
      * Handles the processing of the initial layout section within the configuration files. The function

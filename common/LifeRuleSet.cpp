@@ -6,14 +6,18 @@
 #include "CustomException.h"
 #include "LifeRuleSet.h"
 #include "Point.h"
+#include "BaseStruct.h"
 
 LifeRuleSet::LifeRuleSet(){
 }
 
 Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimension terrain ){
 
-	int rowIndex = 0;
-	int count = 0;
+	int count = Grid::countCells( data, Grid::ALIVE, terrain, pt );
+
+
+	//int rowIndex = 0;
+	//int count = 0;
 
 	/*
 	   The firs series of for loops take care of adding the number of alive cells around a particular
@@ -24,7 +28,7 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 	/*
 	   Scans the row directly below the given parameter.
 	   */
-	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
+	/*for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
 		Point temp( rowIndex, pt.getSecond() - 1 );
 		if( data.get( temp ) == Grid::ALIVE && temp.getFirst() >= terrain.xVals.getFirst() &&
 				temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
@@ -57,7 +61,7 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 			temp1.getFirst() <= terrain.xVals.getSecond() && temp1.getSecond() >= terrain.yVals.getFirst() &&
 				temp1.getSecond() <= terrain.yVals.getSecond() ){
 		count++;
-	}
+	}*/
 
 	/*
 	   Makes the determination of the cells state for the next generation
@@ -79,9 +83,9 @@ Grid::cell_state LifeRuleSet::calculateNewState( Grid data, Point pt, grid_dimen
 	}
 }
 
-Grid LifeRuleSet::simulateGenerations( Grid live, int numGenerations, grid_dimension terrain){
-	Grid current = live;
-	Grid past = live;
+Grid LifeRuleSet::simulateGenerations( BaseStruct *base, int numGenerations, grid_dimension terrain){
+	Grid current = base->getGrid();
+	Grid past = base->getGrid();
 
 	if( numGenerations < 0 ){
 		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
