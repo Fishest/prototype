@@ -6,7 +6,6 @@
 #include "../common/FileParser.h"
 #include "../common/LifeStruct.h"
 #include "../common/BaseStruct.h"
-#include "../common/LifeRuleSet.h"
 #include "../common/Point.h"
 #include "../life_gui_source/LifeGUI.h"
 #include "../common/CustomException.h"
@@ -69,7 +68,6 @@ int main( int argc, char ** args ){
 
 	BaseStruct* base = NULL;
 
-	LifeRuleSet rules;
 	LifeStruct *life = NULL;
 
 	FILE *input = NULL;
@@ -273,7 +271,6 @@ int main( int argc, char ** args ){
 
 	gui->setStruct( base );
 	gui->setPixels( numPixels );
-	gui->setRuleSet( &rules );
 	gui->runGenerations( generations );
 
 	gui->show();

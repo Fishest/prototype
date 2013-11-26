@@ -6,19 +6,19 @@
 
 using namespace std;
 
-BaseStruct::BaseStruct( StructType type ){
+BaseStruct::BaseStruct( StructType _type ){
 	init();
-    this->type = type;
     std::string temp;
+	this->type = _type;
     this->name = temp;
     winDefined = false;
 }
 
-BaseStruct::BaseStruct(StructType type, std::string name){
+BaseStruct::BaseStruct(StructType _type, std::string _name){
 	init();
-    this->type = type;
-    this->name = name;
     winDefined = false;
+	this->type = _type;
+	this->name = _name;
 }
 
 BaseStruct::~BaseStruct(){}

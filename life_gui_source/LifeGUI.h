@@ -7,7 +7,6 @@
 
 #include "../common/constants.h"
 #include "../common/BaseStruct.h"
-#include "../common/iRuleSet.h"
 
 /**
  * The LifeGUI is the QT application that handles the visualization of a BaseStruct to the screen.

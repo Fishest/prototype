@@ -40,7 +40,7 @@ Grid::cell_state Grid::get( Point dimen ){
     }
 }
 
-Grid::cell_state static Grid::convertState( string content ){
+Grid::cell_state Grid::convertState( string content ){
 
 	if( content.find( "Alive" ) != content.npos ){
 		return Grid::ALIVE;
@@ -67,11 +67,11 @@ Grid::cell_state static Grid::convertState( string content ){
 		return Grid::ONE;
 	}
 	else{
-	throw new CustomException( CustomException::INVALID_FILE );
+		throw new CustomException( CustomException::INVALID_FILE );
 	}
 }
 
-int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt ){
+int Grid::countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt ){
 	int rowIndex = 0;
 	int count = 0;
 
@@ -86,7 +86,7 @@ int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain
 	   */
 	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
 		Point temp( rowIndex, pt.getSecond() - 1 );
-		if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+		if( grid.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
 				temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
 					temp.getSecond() <= terrain.yVals.getSecond() ){
 			count++;
@@ -96,7 +96,7 @@ int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain
 	//Scans the row directly above the given parameter.
 	for( rowIndex = pt.getFirst() - 1; rowIndex <= pt.getFirst() + 1; rowIndex++ ){
 		Point temp( rowIndex, pt.getSecond() + 1 );
-		if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+		if( grid.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
 				temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
 					temp.getSecond() <= terrain.yVals.getSecond() ){
 			count++;
@@ -105,7 +105,7 @@ int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain
 
 	//Checks cell to the left of the given point.
 	Point temp( pt.getFirst() - 1, pt.getSecond() );
-	if( data.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
+	if( grid.get( temp ) == state && temp.getFirst() >= terrain.xVals.getFirst() &&
 			temp.getFirst() <= terrain.xVals.getSecond() && temp.getSecond() >= terrain.yVals.getFirst() &&
 				temp.getSecond() <= terrain.yVals.getSecond() ){
 		count++;
@@ -113,7 +113,7 @@ int static Grid::countCells( Grid grid, cell_state state, grid_dimension terrain
 
 	//Checks cell to the left of the given point.
 	Point temp1( pt.getFirst() + 1, pt.getSecond() );
-	if( data.get( temp1 ) == state && temp1.getFirst() >= terrain.xVals.getFirst() &&
+	if( grid.get( temp1 ) == state && temp1.getFirst() >= terrain.xVals.getFirst() &&
 			temp1.getFirst() <= terrain.xVals.getSecond() && temp1.getSecond() >= terrain.yVals.getFirst() &&
 				temp1.getSecond() <= terrain.yVals.getSecond() ){
 		count++;

@@ -6,7 +6,6 @@
 
 #include "../common/FileParser.h"
 #include "../common/Point.h"
-#include "../common/LifeRuleSet.h"
 #include "../common/constants.h"
 #include "../common/LifeStruct.h"
 #include "../common/CustomException.h"
@@ -63,7 +62,6 @@ int main( int argc, char **args ){
 
 	BaseStruct* base = NULL;
 
-	LifeRuleSet rules;
 	LifeStruct *life = NULL;
 
 	FILE *input = NULL;
@@ -214,11 +212,6 @@ int main( int argc, char **args ){
 
 	if( base != NULL && base->getType() == BaseStruct::LIFE ){
 		life = (LifeStruct*)base;
-	}
-
-	if( life == NULL ){
-		fprintf( stderr, "Error during processing of Life struct.\n");
-		return 0;
 	}
 
 	/*

@@ -16,7 +16,6 @@ void LifeGUI::init(){
 	pixels = 10;
 	current = NULL;
 	original = NULL;
-	rules = NULL;
 	pixelHeight = 0;
 	pixelWidth = 0;
 
@@ -158,18 +157,6 @@ void LifeGUI::setStruct( BaseStruct *newBase ){
 
 BaseStruct* LifeGUI::getStruct(){
 	return current;
-}
-
-void LifeGUI::setRuleSet( iRuleSet *ruleset ){
-
-	if( ruleset == NULL )
-		return;
-
-	rules = ruleset;
-}
-
-iRuleSet* LifeGUI::getRuleSet(){
-	return rules;
 }
 
 void LifeGUI::runGenerations( int number ){

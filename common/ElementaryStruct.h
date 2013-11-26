@@ -5,7 +5,7 @@
 
 #include "BaseStruct.h"
 #include "Grid.h"
-#include "iRuleSet.h"
+#include "constants.h"
 
 class ElementaryStruct : public BaseStruct {
 
@@ -27,7 +27,7 @@ class ElementaryStruct : public BaseStruct {
 
 		Grid::cell_state getNextGeneration( Grid grid, Point loc, grid_dimension terrain);
 		Grid::cell_state getCellWithTerrain( Grid grid, Point loc, grid_dimension terrain);
-		std::vector< Gridd::cell_state > vec;
+		std::vector< Grid::cell_state > vec;
 
 };
 

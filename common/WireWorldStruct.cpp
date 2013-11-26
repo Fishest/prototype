@@ -1,10 +1,12 @@
 #include <string>
 #include <vector>
+#include <stdio.h>
 
 #include "WireWorldStruct.h"
 #include "BaseStruct.h"
 #include "Grid.h"
 #include "constants.h"
+#include "CustomException.h"
 
 WireWorldStruct::WireWorldStruct() : BaseStruct( BaseStruct::WIREWORLD ) {
 	Grid grid( this->getDefaultState() );
@@ -150,7 +152,7 @@ void WireWorldStruct::simulateGenerations( int numGenerations, grid_dimension lo
 		past = current;
 
 		//Clears the current board so that it can be filled again.
-		current.reset( this->getDefault() );
+		current.reset( this->getDefaultState() );
 
 		//Completed another generation of simulations
 		currentGen++;	
@@ -160,9 +162,6 @@ void WireWorldStruct::simulateGenerations( int numGenerations, grid_dimension lo
 }
 
 Grid::cell_state WireWorldStruct::getNextGeneration( Grid grid, Point loc, grid_dimension terrain){
-
-	int rowIndex = 0;
-	int colIndex = 0;
 
 	Grid::cell_state current = grid.get( loc );
 	if( current == Grid::EMPTY ){
@@ -181,5 +180,8 @@ Grid::cell_state WireWorldStruct::getNextGeneration( Grid grid, Point loc, grid_
 			return Grid::ELECTRON_HEAD;
 		else
 			return Grid::WIRE;
+	}
+	else{
+		return this->getDefaultState();
 	}
 }

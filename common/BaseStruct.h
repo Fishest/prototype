@@ -167,6 +167,10 @@ public:
      */
     void setColorMap( std::map< Grid::cell_state, Color> map );
 
+    std::map< Grid::cell_state, Color> getColorMap(){
+    	return colorMap;
+	}
+
     /**
      * Updates teh map that handles the correlation between the Cell states and
      * the associated Character codes.
@@ -174,6 +178,10 @@ public:
      * @param map The map between cell states and Character codes.
      */
     void setCharMap( std::map< Grid::cell_state, int > map );
+
+	std::map< Grid::cell_state, int > getCharMap(){
+		return charMap;
+	}
 
     int getGeneration(){
         return currentGeneration;
@@ -209,7 +217,7 @@ public:
         }
     }
 
-    virtual void resetSimulation(){
+    void resetSimulation(){
         data = start;
         currentGeneration = 0;
     }

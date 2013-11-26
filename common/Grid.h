@@ -38,7 +38,7 @@ public:
      * of the underlying processing code. New states are added by just
      * adding new values into this enum.
      */
-    enum cell_state { ALIVE=0, DEAD=1, EMPTY=2, ELECTRON_HEAD=3, ELECTRON_TAIL=4, WIRE=5, ZERO=6, ONE=7 };
+    enum cell_state { ALIVE=0, DEAD=1, EMPTY=2, ELECTRON_HEAD=3, ELECTRON_TAIL=4, WIRE=5, ZERO=6, ONE=7, UNKNOWN=8 };
 
     Grid();
     Grid( Grid::cell_state defaultState );
@@ -90,8 +90,8 @@ public:
      */
     Grid::cell_state getDefault();
 
-	Grid::cell_state static convertState( std::string str );
-	int static countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt );
+	static Grid::cell_state convertState( std::string str );
+	static int countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt );
 
 private:
     

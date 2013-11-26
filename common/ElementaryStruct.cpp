@@ -1,22 +1,23 @@
 #include <string>
+#include <stdio.h>
 
 #include "BaseStruct.h"
 #include "Grid.h"
-#include "iRuleSet.h"
 #include "ElementaryStruct.h"
+#include "CustomException.h"
 
 ElementaryStruct::ElementaryStruct() : BaseStruct( BaseStruct::ELEMENTARY ){
 	Grid grid( Grid::ZERO );
 	this->setGrid( grid );
 	rule = 0;
-	vec();
+	std::vector< Grid::cell_state > vec;
 }
 
 ElementaryStruct::ElementaryStruct( std::string name ) : BaseStruct( BaseStruct::ELEMENTARY, name){
 	Grid grid( Grid::ZERO );
 	this->setGrid( grid );
 	rule = 0;
-	vec();
+	std::vector< Grid::cell_state > vec;
 }
 
 void ElementaryStruct::generateFile( FILE *ptr ){
@@ -50,6 +51,7 @@ void ElementaryStruct::generateFile( FILE *ptr ){
 	std::vector< Point > vec = this->getGrid().getAllWithState( Grid::ONE );
 	fprintf( ptr, "\tInitial = {\n");
 	fprintf( ptr, "\t\tOne = ");
+	int index = 0;
 	for( index = 0; index < vec.size(); index++ ){
 		fprintf( ptr, "%s", vec.at( index ).toString().c_str() );
 		if( index < vec.size() - 1)
@@ -73,6 +75,7 @@ BaseStruct* ElementaryStruct::duplicate(){
 	ele->setWindow( this->getWindow() );
 	ele->setTerrain( this->getTerrain() );
 	ele->setWinDefined( this->isWinDefined() );
+	ele->setRule( this->getRule() );
 
 	return (BaseStruct*)ele;
 }
@@ -100,7 +103,7 @@ void ElementaryStruct::simulateGenerations( int numGenerations, grid_dimension l
 	Grid current = data;
 	Grid past = data;
 
-	if( base->getType() != BaseStruct::ELEMENTARY ){
+	if( this->getType() != BaseStruct::ELEMENTARY ){
 		throw new CustomException( CustomException::INVALID_TYPE_FOR_SIMULATION );
 	}
 
@@ -116,7 +119,7 @@ void ElementaryStruct::simulateGenerations( int numGenerations, grid_dimension l
 	int index = 0;
 	int mask = 0x01;
 	for( index=0; index < 8; index++){
-		if( rule & mask != 0 ){
+		if( (rule & mask) != 0 ){
 			vec.push_back( Grid::ONE );
 		}
 		else{
@@ -154,7 +157,7 @@ void ElementaryStruct::simulateGenerations( int numGenerations, grid_dimension l
 		past = current;
 
 		//Clears the current board so that it can be filled again.
-		current.reset( this->getDefault() );
+		current.reset( this->getDefaultState() );
 
 		//Completed another generation of simulations
 		currentGen++;	
@@ -175,7 +178,7 @@ Grid::cell_state ElementaryStruct::getNextGeneration( Grid grid, Point loc, grid
 	 * In the event that this rule set is applied to a Grid that was loaded for a separate
 	 * struct type.
 	 */
-	if( state != GRID::ZERO ){
+	if( state != Grid::ZERO ){
 		return state;
 	}
 

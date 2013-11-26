@@ -2,6 +2,9 @@
 #include <stdio.h>
 
 #include "LifeStruct.h"
+#include "Grid.h"
+#include "CustomException.h"
+#include "BaseStruct.h"
 
 LifeStruct::LifeStruct() : BaseStruct( BaseStruct::LIFE ){
 	Grid grid( Grid::DEAD );
@@ -125,7 +128,7 @@ void LifeStruct::simulateGenerations( int numGenerations, grid_dimension localTe
 		past = current;
 
 		//Clears the current board so that it can be filled again.
-		current.reset( this->getDefault() );
+		current.reset( this->getDefaultState() );
 
 		//Completed another generation of simulations
 		currentGen++;	

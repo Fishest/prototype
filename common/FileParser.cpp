@@ -9,10 +9,15 @@
 #include "Grid.h"
 #include "LifeStruct.h"
 #include "Token.h"
+#include "WireWorldStruct.h"
+#include "BaseStruct.h"
+#include "ElementaryStruct.h"
 
 FileParser::FileParser(FILE* file){
     input = file;
     state = FileParser::NOTHING;
+	defaultState = Grid::UNKNOWN;
+	base = NULL;
 }
 
 FileParser::FileParser( std::string filename ){
@@ -22,6 +27,8 @@ FileParser::FileParser( std::string filename ){
         throw new CustomException( CustomException::INVALID_FILENAME );
     }
     state = FileParser::NOTHING;    
+	defaultState = Grid::UNKNOWN;
+	base = NULL;
 }
 
 FileParser::~FileParser(){
@@ -66,7 +73,7 @@ bool FileParser::hasNext(){
     try{
         tok = getNextToken( "=", 1);
         if( tok.getContent().find( "Life" ) != tok.getContent().npos ){
-			base = new LifeStruct();
+			base = new LifeStruct(); 
         }
 		else if( tok.getContent().find( "WireWorld" ) != tok.getContent().npos ){
 			base = new WireWorldStruct();
@@ -498,7 +505,7 @@ Grid FileParser::processInititalLayout( ){
     
     Grid data( defaultState );
     
-    Grid::cell_state currentState;
+    Grid::cell_state currentState = Grid::UNKNOWN;
     int state = 0;
     
     /*
@@ -613,7 +620,7 @@ void FileParser::processStruct( BaseStruct *base ){
     bool initialDefined = false;
 
     Token tok = getNextToken( "{", 1);
-    ParseState state = FileParser::LIFE_START;
+    ParseState state = FileParser::STRUCT_START;
     
     while( tok.getMatachedDelim() != '}' ){
         
@@ -719,7 +726,7 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
     std::map< Grid::cell_state, int > chars;
     
     int state = 0;
-    Grid::cell_state foundState;
+    Grid::cell_state foundState = Grid::UNKNOWN;
     
     //Move over the open curly brace
     Token worker = getNextToken("{", 1);
@@ -773,7 +780,7 @@ std::map< Grid::cell_state, Color> FileParser::processColors(){
     std::map< Grid::cell_state, Color > colors;
     
     Token tok = getNextToken("{", 1);
-    Grid::cell_state stateHeader;
+    Grid::cell_state stateHeader = Grid::UNKNOWN;
     Color value;
     int state = 0;
     
@@ -825,4 +832,6 @@ int FileParser::isInDelim( char value, char *ptr, int length ){
     
     return -1;
 }
+
+
 
