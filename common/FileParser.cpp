@@ -562,49 +562,67 @@ grid_dimension FileParser::processTerrain(){
     
     bool xFound = false;
     bool yFound = false;
+
+	bool processingX = false;
+
+    Token tok = getNextToken("{", 1);
+    int state = 0;
     
-    //Skip all content prior to the open curly brace
-    getNextToken("{", 1);
-    
-    /*
-     * Collect all the headers and values from the terrain
-     * section. They will now be parsed and stored inside a grid_dimension
-     * prior to being returned.
-     */
-    Token header = getNextToken("=", 1);
-    Token value = getNextToken(";", 1);
-    
-    Token header2 = getNextToken("=", 1);
-    Token value2 = getNextToken(";", 1);
-    
-    Point pt1 = parseDotRange( value.getContent() );
-    Point pt2 = parseDotRange( value2.getContent() );
-    
-    //Processes the first header that was found.
-    if( header.getContent().find( "Xrange" ) != header.getContent().npos ){
-        grid.xVals = pt1;
-        xFound = true;
-    }
-    else if( header.getContent().find( "Yrange" ) != header.getContent().npos ){
-        grid.yVals = pt1;
-        yFound = true;
-    }
-   
-    //Processes the second header that found.
-    if( header2.getContent().find( "Xrange" ) != header2.getContent().npos ){
-        if( xFound )
-            throw new CustomException( CustomException::INVALID_TERRAIN_WINDOW );
+    while( tok.getMatachedDelim() != '}' ){
         
-        grid.xVals = pt2;
-    }
-    if( header2.getContent().find( "Yrange" ) != header2.getContent().npos ){
-        if( yFound )
-            throw new CustomException( CustomException::INVALID_TERRAIN_WINDOW );
         
-        grid.yVals = pt2;
-    }
+        if( state == 1 && tok.getMatachedDelim() == '=' ){
+            //Two headers in a row have been found in the provided file. This isn't valid
+            //and thus needs to be reported.
+            throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+        }
+        else if( state == 0 && tok.getMatachedDelim() == '='){
+            //A header was found.
+ 			state = 1;
+
+			if( tok.getContent().find( "Xrange" ) != tok.getContent().npos ){
+				processingX = true;
+				if( xFound )
+					throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+				xFound = true;
+			}
+			else if( tok.getContent().find( "Yrange" ) != tok.getContent().npos ){
+				processingX = false;
+				if( yFound )
+					throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+				yFound = true;
+			}
+			else{
+				throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+			}
+
+        }
+        else if( state == 1 && tok.getMatachedDelim() == ';' ){
+            state = 0;
+
+			Point pt1 = parseDotRange( tok.getContent() );
+			if( processingX ){
+				grid.xVals = pt1;
+			}
+			else{
+				grid.yVals = pt1;
+			}
+        }
+        
+        /*
+         * Grabs the next token from the file. It will consider a token to be the content
+         * , ignoring whitespace, that is between current location and the first occurence
+         * of one of the provided delimeter characters.
+         */
+        tok = getNextToken( "=;}", 3);
+        
+    } //Ends while loop
     
-    getNextToken(";", 1);
+    //Scan through the remaining semi-colon at the end of the struct.
+    tok = getNextToken(";", 1);
+
+	if( !xFound || !yFound )
+		throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
     
     return grid;
 }

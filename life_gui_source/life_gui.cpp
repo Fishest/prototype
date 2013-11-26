@@ -68,8 +68,6 @@ int main( int argc, char ** args ){
 
 	BaseStruct* base = NULL;
 
-	LifeStruct *life = NULL;
-
 	FILE *input = NULL;
 
 	LifeGUI *gui = new LifeGUI();
@@ -220,15 +218,6 @@ int main( int argc, char ** args ){
 		return 0;
 	}
 
-	if( base != NULL && base->getType() == BaseStruct::LIFE ){
-		life = (LifeStruct*)base;
-	}
-
-	if( life == NULL ){
-		fprintf( stderr, "Error during processing of Life struct.\n");
-		return 0;
-	}
-
 	/*
 	 * The next step is to update the window and terrain values within the struct
 	 * with the values that were pulled from the arguments.
@@ -236,33 +225,33 @@ int main( int argc, char ** args ){
 
 	try{
 		if( terrainXOverride ){
-			grid_dimension dimen = life->getTerrain();
+			grid_dimension dimen = base->getTerrain();
 			dimen.xVals = tx;
-			life->setTerrain( dimen );
+			base->setTerrain( dimen );
 		}
 
 		if( terrainYOverride ){
-			grid_dimension dimen = life->getTerrain();
+			grid_dimension dimen = base->getTerrain();
 			dimen.yVals = ty;
-			life->setTerrain( dimen );
+			base->setTerrain( dimen );
 		}
 
 		if( winXOverride ){
 		 	grid_dimension dimen;
-			if( life->isWinDefined() )
-				dimen = life->getWindow();
+			if( base->isWinDefined() )
+				dimen = base->getWindow();
 			
 			dimen.xVals = wx;
-			life->setWindow( dimen );
+			base->setWindow( dimen );
 		}
 
 	 	if( winYOverride ){
 		 	grid_dimension dimen;
-		 	if( life->isWinDefined() )
-		 		dimen = life->getWindow();
+		 	if( base->isWinDefined() )
+		 		dimen = base->getWindow();
 
 		 	dimen.yVals = wy;
-		 	life->setWindow( dimen );
+		 	base->setWindow( dimen );
 		}
 	} catch( CustomException a ){
 		a.ErrorMessage();

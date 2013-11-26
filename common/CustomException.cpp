@@ -4,7 +4,7 @@ CustomException::CustomException(ErrorCode errorCode) {
     code = errorCode;
 }
 
-const char* CustomException::ErrorMessage() const throw () {
+void CustomException::ErrorMessage() {
 
 	/*
 	   Prints an error message consisten with the problem that was encountered

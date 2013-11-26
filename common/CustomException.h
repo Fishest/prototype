@@ -37,13 +37,13 @@ public:
 		INVALID_STRUCT_TYPE,
 		INVALID_TYPE_FOR_SIMULATION,/*Refers to a non elementary struct being provided to elementary rule set*/
 		INVALID_RULE_VALUE, /*Value pulled for the Rule isn't valid*/
-		NOT_IMPLEMENTED_YET//Used when a function hasn't been implemented yet.
-                
+		NOT_IMPLEMENTED_YET,//Used when a function hasn't been implemented yet.
+ 		INVALID_TERRAIN_STRUCT//Invalid terrain provided in the configuration file.
     };
 
     CustomException(ErrorCode errorCode);
 
-    virtual const char* ErrorMessage() const throw ();
+    void ErrorMessage();
 
     ErrorCode getError();
 
