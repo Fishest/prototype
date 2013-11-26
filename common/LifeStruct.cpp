@@ -85,9 +85,75 @@ Grid::cell_state LifeStruct::getDefaultState(){
 	return Grid::DEAD;
 }
 
-iRuleSet* LifeStruct::getDefaultRuleSet(){
-	LifeRuleSet *life = new LifeRuleSet();
-	return (*iRuleSet)life;
+void LifeStruct::simulateGenerations( int numGenerations, grid_dimension localTerrain ){
+
+	BaseStruct::simulateGenerations( numGenerations, localTerrain );
+
+	Grid current = data;
+	Grid past = data;
+
+	if( numGenerations < 0 ){
+		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
+	}
+
+	int currentGen = 0;
+	int rowIndex = 0;
+	int colIndex = 0;
+
+	/*
+	 * Runs through the specified number of generations. Each run through this loop corresponds to a
+	 * generation being simulated.
+	 */
+	while( currentGen < numGenerations ){
+
+		for( rowIndex = localTerrain.yVals.getFirst(); rowIndex <= localTerrain.yVals.getSecond(); rowIndex++ ){
+
+			for( colIndex = localTerrain.xVals.getFirst(); colIndex <= localTerrain.xVals.getSecond(); colIndex++ ){
+
+				/*
+				   For each cell in the terrain, the new state of that cell needs to be calculated.
+				   */
+				Point temp( colIndex, rowIndex);
+				Grid::cell_state newState = calculateNewState( past, temp, localTerrain);
+
+				//Updates the state with the currently processing cell.
+				current.set( temp, newState );
+			}
+		}
+
+		//Updates the reading table
+		past = current;
+
+		//Clears the current board so that it can be filled again.
+		current.reset( this->getDefault() );
+
+		//Completed another generation of simulations
+		currentGen++;	
+	}
+
+	data = past;
 }
 
+Grid::cell_state LifeStruct::calculateNewState( Grid data, Point pt, grid_dimension terrain ){
 
+	int count = Grid::countCells( data, Grid::ALIVE, terrain, pt );
+
+	/*
+	   Makes the determination of the cells state for the next generation
+	   */
+	if( data.get( pt ) == Grid::ALIVE ){
+		if( count < 2 )
+			return Grid::DEAD;
+		if( count == 2 || count == 3 )
+			return Grid::ALIVE;
+		else
+			return Grid::DEAD;
+	}
+	else{
+
+		if( count == 3 )
+			return Grid::ALIVE;
+		else
+			return Grid::DEAD;
+	}
+}

@@ -4,18 +4,19 @@
 #include "WireWorldStruct.h"
 #include "BaseStruct.h"
 #include "Grid.h"
+#include "constants.h"
 
 WireWorldStruct::WireWorldStruct() : BaseStruct( BaseStruct::WIREWORLD ) {
 	Grid grid( this->getDefaultState() );
 	this->setGrid( grid );
 }
 
-WireWorldStruct( std::string name ) : BaseStruct( BaseStruct::WIREWORLD, name ) {
+WireWorldStruct::WireWorldStruct( std::string name ) : BaseStruct( BaseStruct::WIREWORLD, name ) {
 	Grid grid( this->getDefaultState() );
 	this->setGrid( grid );
 }
 
-void generateFile( FILE *ptr ){
+void WireWorldStruct::generateFile( FILE *ptr ){
 
 	unsigned int index = 0;
 
@@ -91,7 +92,7 @@ void generateFile( FILE *ptr ){
 	fprintf( ptr, "};\n");
 }
 
-BaseStruct* duplicate(){
+BaseStruct* WireWorldStruct::duplicate(){
 	WireWorldStruct *wire = new WireWorldStruct();
 
 	wire->setName( this->getName() );
@@ -105,11 +106,80 @@ BaseStruct* duplicate(){
 	return wire;
 }
 
-Grid::cell_state getDefaultState(){
+Grid::cell_state WireWorldStruct::getDefaultState(){
 	return Grid::EMPTY;
 }
 
-iRuleSet* WireWorldStruct::getDefaultRuleSet(){
-	WireWorldRuleSet* wire = new WireWorldRuleSet();
-	return (*iRuleSet)wire;
+void WireWorldStruct::simulateGenerations( int numGenerations, grid_dimension localTerrain ){
+
+	BaseStruct::simulateGenerations( numGenerations, localTerrain );
+
+	if( numGenerations < 0 ){
+		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
+	}
+
+	Grid current = data;
+	Grid past = data;
+
+	int currentGen = 0;
+	int rowIndex = 0;
+	int colIndex = 0;
+
+	/*
+	 * Runs through the specified number of generations. Each run through this loop corresponds to a
+	 * generation being simulated.
+	 */
+	while( currentGen < numGenerations ){
+
+		for( rowIndex = localTerrain.yVals.getFirst(); rowIndex <= localTerrain.yVals.getSecond(); rowIndex++ ){
+
+			for( colIndex = localTerrain.xVals.getFirst(); colIndex <= localTerrain.xVals.getSecond(); colIndex++ ){
+
+				/*
+				   For each cell in the terrain, the new state of that cell needs to be calculated.
+				   */
+				Point temp( colIndex, rowIndex);
+				Grid::cell_state newState = getNextGeneration( past, temp, localTerrain);
+
+				//Updates the state with the currently processing cell.
+				current.set( temp, newState );
+			}
+		}
+
+		//Updates the reading table
+		past = current;
+
+		//Clears the current board so that it can be filled again.
+		current.reset( this->getDefault() );
+
+		//Completed another generation of simulations
+		currentGen++;	
+	}
+
+	data = past;
+}
+
+Grid::cell_state WireWorldStruct::getNextGeneration( Grid grid, Point loc, grid_dimension terrain){
+
+	int rowIndex = 0;
+	int colIndex = 0;
+
+	Grid::cell_state current = grid.get( loc );
+	if( current == Grid::EMPTY ){
+		return Grid::EMPTY;
+	}
+	else if( current == Grid::ELECTRON_HEAD ){
+		return Grid::ELECTRON_TAIL;
+	}
+	else if( current == Grid::ELECTRON_TAIL ){
+		return Grid::WIRE;
+	}
+	else if( current == Grid::WIRE )
+	{
+		int count = Grid::countCells( grid, Grid::ELECTRON_HEAD, terrain, loc );
+		if( count == 1 || count == 2 )
+			return Grid::ELECTRON_HEAD;
+		else
+			return Grid::WIRE;
+	}
 }

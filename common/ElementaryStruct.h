@@ -17,13 +17,17 @@ class ElementaryStruct : public BaseStruct {
 		void generateFile( FILE *ptr );
 		BaseStruct* duplicate();
 		Grid::cell_state getDefaultState();
-		iRuletSet* getDefaultRuleSet();
+		void simulateGenerations( int numGenerations, grid_dimension localTerrain  );
 
 		int getRule();
 		void setRule( int value );
 
 	private:
 		int rule;
+
+		Grid::cell_state getNextGeneration( Grid grid, Point loc, grid_dimension terrain);
+		Grid::cell_state getCellWithTerrain( Grid grid, Point loc, grid_dimension terrain);
+		std::vector< Gridd::cell_state > vec;
 
 };
 

@@ -59,20 +59,6 @@ class LifeGUI : public QWidget{
 	BaseStruct *getStruct();
 
 	/**
-	 * Sets the Rules that are used for progressing a Grid from Generation N to Generation N+1.
-	 *
-	 * @param base Pointer to the ruleset that should be used.
-	 */
-	void setRuleSet( iRuleSet *base );
-
-	/**
-	 * Gets a pointer to the RuleSet that is currently being used for the generation progression.
-	 *
-	 * @param Pointer to the RuleSet that is being used currently.
-	 */
-	iRuleSet* getRuleSet();
-
-	/**
 	 * Sets the number of pixels that are used when drawing a single cell of the Grid.
 	 *
 	 * @param pixel The number of pixels for a given cell, width.
@@ -109,7 +95,6 @@ class LifeGUI : public QWidget{
 	int numElementsHeight;
 	BaseStruct *original;
 	BaseStruct *current;
-	iRuleSet *rules;
 
 };
 

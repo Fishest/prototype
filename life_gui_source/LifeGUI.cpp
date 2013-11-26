@@ -179,8 +179,7 @@ void LifeGUI::runGenerations( int number ){
 		exit(0);
 	}
 
-	Grid tGrid = rules->simulateGenerations( current->getGrid(), number, current->getTerrain() );
-	current->setGrid( tGrid );
+	current->simulateGenerations( number, current->getTerrain() );
 }
 
 void LifeGUI::setImage( const QImage &newImage){

@@ -15,9 +15,12 @@ class WireWorldStruct : public BaseStruct {
 		void generateFile( FILE *ptr );
 		BaseStruct* duplicate();
 		Grid::cell_state getDefaultState();
-		iRuleSet* getDefaultRuleSet();
+
+		void simulateGenerations( int numGenerations, grid_dimension localTerrain );
 
 	private:
+
+		Grid::cell_state getNextGeneration( Grid grid, Point loc, grid_dimension terrain);
 
 };
 

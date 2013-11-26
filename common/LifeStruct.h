@@ -56,9 +56,20 @@ public:
 
 	Grid::cell_state getDefaultState();
 
-	iRuletSet* getDefaultRuleSet();
+    void simulateGenerations( int numGenerations, grid_dimension localTerrain  );
 
 private:
+
+    /*
+     * When provided with a Grid and a point in that Grid, this function will calculate
+     * the next state for that given cell. This transformation is based entirely off the
+     * rules defined in the project writeup.
+     *
+     * @param data The Grid that contains data for generation N.
+     * @param pt The cell within the Grid to be transformed to the next generation.
+     * @param terrain The dimension of the points that need to be transformed.
+     */
+    Grid::cell_state calculateNewState( Grid data, Point pt, grid_dimension terrain );
 
 };
 

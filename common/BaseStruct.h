@@ -175,6 +175,11 @@ public:
      */
     void setCharMap( std::map< Grid::cell_state, int > map );
 
+    int getGeneration(){
+        return currentGeneration;
+    }
+
+
     /**
      * Virtual function that must be implemented by any class that is
      * extending this class. This function will take the current state
@@ -198,7 +203,16 @@ public:
 
 	virtual Grid::cell_state getDefaultState() = 0;
 
-	virtual iRuletSet* getDefaultRuleSet() = 0;
+    virtual void simulateGenerations( int numGenerations, grid_dimension localTerrain ){
+        if( numGenerations >= 0 ){
+            currentGeneration += numGenerations;
+        }
+    }
+
+    virtual void resetSimulation(){
+        data = start;
+        currentGeneration = 0;
+    }
     
 private:
     void init();
@@ -207,8 +221,10 @@ protected:
 
     StructType type;
     std::string name;
-    Grid data;
+    Grid data; //Grid that corresponds to the working struct
+    Grid start;
     bool winDefined;
+    int currentGeneration;
     
     /*
      * These structs keep track of the window and terrain

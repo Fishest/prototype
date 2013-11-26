@@ -163,6 +163,8 @@ void BaseStruct::setColor(Grid::cell_state state, Color val){
 
 void BaseStruct::setGrid(Grid update){
     this->data = update;
+    this->start = update;
+    currentGeneration = 0;
 }
 
 void BaseStruct::setWindow(grid_dimension dimen){

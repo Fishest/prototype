@@ -269,9 +269,7 @@ int main( int argc, char **args ){
 	/*
 	 * The next step is to run the grid through the requested number of generations.
 	 */
-	 Grid locGrid = life->getGrid();
-	 Grid & refGrid = locGrid;
-	 life->setGrid( rules.simulateGenerations( refGrid, generations, life->getTerrain() ) );
+	 life->simulateGenerations( generations, life->getTerrain() );
 
 	/*
 	 * The last step is to output the results of the simulations to standard output. The format
