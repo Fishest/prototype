@@ -15,7 +15,6 @@ void LifeGUI::init(){
 
 	pixels = 10;
 	current = NULL;
-	original = NULL;
 	pixelHeight = 0;
 	pixelWidth = 0;
 
@@ -25,7 +24,6 @@ void LifeGUI::init(){
 void LifeGUI::updateImageSize(){
 
 	if( current == NULL ){
-		image = QImage( 10, 10, QImage::Format_ARGB32);
 		pixelHeight = 10;
 		pixelWidth = 10;
 
@@ -43,22 +41,7 @@ void LifeGUI::updateImageSize(){
 		pixelHeight += ( numElementsHeight - 1 );
 	}
 
-	image = QImage( pixelWidth, pixelHeight, QImage::Format_ARGB32 );
-}
-
-void LifeGUI::setPenColor( const QColor &newColor){
-	curColor = newColor;
-}
-
-void LifeGUI::setPixels( int pixel ){
-
-	if( pixel < 1 )
-		pixel = 1;
-
-	pixels = pixel;
-	updateImageSize();
-	update();
-	updateGeometry();
+	//image = QImage( pixelWidth, pixelHeight, QImage::Format_ARGB32 );
 }
 
 //Tells the QT what size the widge should be
@@ -70,7 +53,7 @@ QSize LifeGUI::sizeHint() const{
 }
 
 void LifeGUI::mousePressEvent( QMouseEvent *event ){
-	this->runGenerations( 1 );
+	this->simulateGen( 1 );
 	updateImageSize();
 	update();
 	updateGeometry();
@@ -79,11 +62,20 @@ void LifeGUI::mousePressEvent( QMouseEvent *event ){
 void LifeGUI::mouseMoveEvent(QMouseEvent *event){
 }
 
+void LifeGUI::resizeEvent( QResizeEvent *event ){
+	updateImageSize();
+	update();
+	updateGeometry();
+}
+
 void LifeGUI::paintEvent( QPaintEvent *event ){
 
 	BaseStruct *pointer = current;
 
 	QPainter painter( this );
+
+	this->setFixedHeight( pixelHeight );
+	this->setFixedWidth( pixelWidth );
 
 	//This function will take the content from the BaseStruct and will
 	//go about updating the image format with the content.
@@ -137,17 +129,10 @@ void LifeGUI::setStruct( BaseStruct *newBase ){
 	if( newBase == NULL )
 		return;
 
-	//Free any memory currently allocated for the current Grid objects.
 	if( current != NULL )
 		delete current;
-	if( original != NULL )
-		delete original;
 
-	current = NULL;
-	original = NULL;
-
-	original = newBase;
-	current = original->duplicate();
+	current = newBase;
 
 	this->setWindowTitle( current->getName().c_str() );
 
@@ -159,18 +144,38 @@ BaseStruct* LifeGUI::getStruct(){
 	return current;
 }
 
-void LifeGUI::runGenerations( int number ){
+void LifeGUI::pixelsChanged( int value ){
+	pixels = value;
 
-	if( number < 0 ){
-		fprintf(stderr, "Invalid number presented as generation number.\n" );
-		exit(0);
-	}
-
-	current->simulateGenerations( number, current->getTerrain() );
+	updateImageSize();
+	updateGeometry();
+	update();
 }
 
-void LifeGUI::setImage( const QImage &newImage){
-	this->image = newImage;
+void LifeGUI::delayChanged( int value ){
+	delay = value;
 }
 
+void LifeGUI::simulateGen( int value ){
+	current->simulateGenerations( value, current->getTerrain() );
+	emit genChanged( current->getGeneration() );
+
+	updateImageSize();
+	update();
+	updateGeometry();
+}
+
+void LifeGUI::resetChanged(){
+	current->resetSimulation();
+	emit genChanged( current->getGeneration() );
+
+	updateImageSize();
+	update();
+	updateGeometry();
+}
+
+void LifeGUI::operationChanged( int value ){
+	//This will need to switch between the pause or constant flowing
+	//visualization
+}
 

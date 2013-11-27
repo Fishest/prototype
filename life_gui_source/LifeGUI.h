@@ -19,29 +19,13 @@
 class LifeGUI : public QWidget{
 
 	Q_OBJECT
-	Q_PROPERTY(QColor penColor READ penColor WRITE setPenColor)
-	Q_PROPERTY(QImage image READ getImage WRITE setImage)
-	Q_PROPERTY(int pixels READ numPixels WRITE setPixels)
+	Q_PROPERTY(int pixels READ numPixels WRITE pixelsChanged)
 
 	public:
 	LifeGUI( QWidget *parent = 0 );
 	virtual ~LifeGUI(){};
 
-	void setPenColor( const QColor &newColor);
-	QColor penColor() const {return curColor; }
-	
-	void setImage( const QImage &newImage );
-	QImage getImage() const {return image;}
 	QSize sizeHint() const;
-
-	/**
-	 * Runs the current Grid through a series of generation simulations. The simulation is done using the 
-	 * RuleSet that has been defined through the setRuleSet function. The decoupling will allow for extendable
-	 * support in the future of overlapping functionality.
-	 *
-	 * @param number The number of generations to run through.
-	 */
-	void runGenerations( int number );
 
 	/**
 	 * Sets the BaseStruct that will be used within the application to control the terrain and the window values.
@@ -58,23 +42,28 @@ class LifeGUI : public QWidget{
 	BaseStruct *getStruct();
 
 	/**
-	 * Sets the number of pixels that are used when drawing a single cell of the Grid.
-	 *
-	 * @param pixel The number of pixels for a given cell, width.
-	 */
-	void setPixels( int pixel );
-
-	/**
 	 * Gets the number of pixels that are used when drawing a single cell of the Grid.
 	 *
 	 * @return The number of pixels being used as the width of a cell.
 	 */
 	int numPixels() const { return pixels; }
 
+	signals:
+	void genChanged( int value );
+
+	public slots:
+
+	void pixelsChanged( int value );
+	void delayChanged( int value );
+	void simulateGen( int value );
+	void resetChanged();
+	void operationChanged( int value );
+
 	protected:
 	void mousePressEvent( QMouseEvent *event );
 	void mouseMoveEvent(QMouseEvent *event);
 	void paintEvent( QPaintEvent *event );
+	void resizeEvent( QResizeEvent *event );
 
 	private:
 	void init();
@@ -86,13 +75,12 @@ class LifeGUI : public QWidget{
 	void updateImageSize();
 
 	QColor curColor;
-	QImage image;
 	int pixels;
+	int delay;
 	int pixelHeight;
 	int pixelWidth;
 	int numElementsWidth;
 	int numElementsHeight;
-	BaseStruct *original;
 	BaseStruct *current;
 
 };

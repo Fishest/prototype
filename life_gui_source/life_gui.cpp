@@ -7,8 +7,9 @@
 #include "../common/LifeStruct.h"
 #include "../common/BaseStruct.h"
 #include "../common/Point.h"
-#include "../life_gui_source/LifeGUI.h"
+#include "LifeGUI.h"
 #include "../common/CustomException.h"
+#include "mainwindow.h"
 
 void printHelpMessage(){
 	fprintf( stderr, "\n\nlife_gui\n");
@@ -70,7 +71,9 @@ int main( int argc, char ** args ){
 
 	FILE *input = NULL;
 
+	QScrollArea *scroll = new QScrollArea;
 	LifeGUI *gui = new LifeGUI();
+	MainWindow *wnd = new MainWindow;
 
 	while( index < argc ){
 
@@ -258,11 +261,26 @@ int main( int argc, char ** args ){
 		return 0;
 	}
 
+	//Adjusts the values for the Grid to be displayed.
 	gui->setStruct( base );
-	gui->setPixels( numPixels );
-	gui->runGenerations( generations );
-
+	gui->pixelsChanged( numPixels );
+	gui->simulateGen( generations );
 	gui->show();
+
+	//Adds the scroll bars to the grid screen when they are needed to
+	//view the whole Grid.
+	scroll->setWidget( gui );
+	//scroll->setWidgetResizable( false );
+	scroll->show();
+
+	QObject::connect( gui, SIGNAL(genChanged(int)), wnd, SLOT(gensChanged(int)));
+	QObject::connect( wnd, SIGNAL(pixelsChanged(int)), gui, SLOT(pixelsChanged(int)));
+	QObject::connect( wnd, SIGNAL(delayChanged(int)), gui, SLOT(delayChanged(int)));
+	QObject::connect( wnd, SIGNAL(simulateGen(int)), gui, SLOT(simulateGen(int)));
+	QObject::connect( wnd, SIGNAL(resetChanged()), gui, SLOT(resetChanged()));
+	QObject::connect( wnd, SIGNAL(operationChanged(int)), gui, SLOT(operationChanged(int)));
+
+	wnd->show();
 
 	return app.exec();
 
