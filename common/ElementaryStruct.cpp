@@ -197,14 +197,14 @@ Grid::cell_state ElementaryStruct::getNextGeneration( Grid grid, Point loc, grid
 	loc1.setFirst( loc.getFirst() );
 	val = getCellWithTerrain( grid, loc1, terrain );
 	if( val == Grid::ONE ){
-		builtIndex = builtIndex & 0x02;
+		builtIndex = builtIndex | 0x02;
 	}
 
 	//Set the LSB if the cell to the right, above, is a 1
 	loc1.setFirst( loc.getFirst() + 1 );
 	val = getCellWithTerrain( grid, loc1, terrain );
 	if( val == Grid::ONE ){
-		builtIndex = builtIndex & 0x01;
+		builtIndex = builtIndex | 0x01;
 	}
 
 	return vec.at( builtIndex );
