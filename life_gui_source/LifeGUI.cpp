@@ -17,6 +17,7 @@ void LifeGUI::init(){
 	current = NULL;
 	pixelHeight = 0;
 	pixelWidth = 0;
+	timer = NULL;
 
 	updateImageSize();
 }
@@ -154,15 +155,37 @@ void LifeGUI::pixelsChanged( int value ){
 
 void LifeGUI::delayChanged( int value ){
 	delay = value;
+	simulateGen( 1 );
+}
+
+void LifeGUI::simulateGen(){
+	simulateGen( 1 );
 }
 
 void LifeGUI::simulateGen( int value ){
+
+	
 	current->simulateGenerations( value, current->getTerrain() );
 	emit genChanged( current->getGeneration() );
 
 	updateImageSize();
 	update();
 	updateGeometry();
+
+	if( timer != NULL && timer->isActive() )
+		timer->stop();
+	if( delay > 0 ){
+
+		if( timer != NULL ){
+			delete timer;
+			timer = NULL;
+		}
+
+		timer = new QTimer(this);
+		connect( timer, SIGNAL(timeout()), this, SLOT(simulateGen()));
+		timer->start( delay * 1000 );
+	}
+	
 }
 
 void LifeGUI::resetChanged(){

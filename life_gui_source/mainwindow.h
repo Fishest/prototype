@@ -15,6 +15,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	void setStartPixels( int value );
+	void setStartDelay( int value );
+	void setStartGenerations( int value );
+
 signals:
 	void pixelsChanged( int value );
 	void delayChanged( int value );
@@ -44,6 +48,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+	bool cts;
 };
 
 #endif // MAINWINDOW_H

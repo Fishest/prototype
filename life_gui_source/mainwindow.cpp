@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+	cts = false;
 }
 
 MainWindow::~MainWindow()
@@ -30,6 +31,16 @@ void MainWindow::on_restartButton_clicked()
 
 void MainWindow::on_playButton_clicked()
 {
+	if( cts ){
+		ui->playButton->setText("Start");
+		emit delayChanged( 0 );
+		cts = false;
+	}
+	else{
+		ui->playButton->setText("Stop");
+		emit delayChanged( ui->delaySpinBox->value() );
+		cts = true;
+	}
 
 }
 
@@ -40,7 +51,7 @@ void MainWindow::on_stepButton_clicked()
 
 void MainWindow::on_delaySpinBox_valueChanged(int arg1)
 {
-	emit delayChanged( arg1 );
+	//emit delayChanged( arg1 );
 }
 
 void MainWindow::on_pixelSpinBox_valueChanged(int arg1)
@@ -55,3 +66,16 @@ void MainWindow::gensChanged( int value ){
 	sprintf( buffer, "%d", value );
 	ui->generationLabel->setText( buffer );
 }
+
+void MainWindow::setStartPixels( int value ){
+	ui->pixelSpinBox->setValue( value );
+}
+
+void MainWindow::setStartDelay( int value ){
+	ui->delaySpinBox->setValue( value );
+}
+
+void MainWindow::setStartGenerations( int value ){
+	gensChanged( value );
+}
+

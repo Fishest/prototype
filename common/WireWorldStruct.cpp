@@ -79,7 +79,7 @@ void WireWorldStruct::generateFile( FILE *ptr ){
 	fprintf( ptr, "\n");
 	
 	vec = this->getGrid().getAllWithState( Grid::WIRE );
-	fprintf( ptr, "\t\tTail = ");
+	fprintf( ptr, "\t\tWire = ");
 	for( index = 0; index < vec.size(); index++ ){
 		fprintf( ptr, "%s", vec.at( index ).toString().c_str() );
 		if( index < vec.size() - 1)

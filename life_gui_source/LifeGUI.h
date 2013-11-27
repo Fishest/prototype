@@ -56,6 +56,7 @@ class LifeGUI : public QWidget{
 	void pixelsChanged( int value );
 	void delayChanged( int value );
 	void simulateGen( int value );
+	void simulateGen();
 	void resetChanged();
 	void operationChanged( int value );
 
@@ -82,6 +83,7 @@ class LifeGUI : public QWidget{
 	int numElementsWidth;
 	int numElementsHeight;
 	BaseStruct *current;
+	QTimer *timer;
 
 };
 

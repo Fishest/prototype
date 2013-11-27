@@ -64,6 +64,7 @@ int main( int argc, char ** args ){
 	bool winXOverride = false;
 	bool winYOverride = false;
 	bool fileInput = false;
+	bool showDialog = false;
 	std::string filename;
 	QApplication app(argc, args);
 
@@ -81,7 +82,10 @@ int main( int argc, char ** args ){
 			printHelpMessage();
 			return 0;
 		}
-		if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 's' ){
+		else if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 'c' ){
+			showDialog = true;
+		}
+		else if( strlen( args[index] ) == 2 && args[index][0] == '-' && args[index][1] == 's' ){
 			if( argc <= ++index ){
 				fprintf( stderr, "Invalid number of arguments to contain the number of pixels.\n");
 				return 0;
@@ -267,10 +271,13 @@ int main( int argc, char ** args ){
 	gui->simulateGen( generations );
 	gui->show();
 
+	wnd->setStartPixels( numPixels );
+	wnd->setStartDelay( 0 );
+	wnd->setStartGenerations( generations );
+
 	//Adds the scroll bars to the grid screen when they are needed to
 	//view the whole Grid.
 	scroll->setWidget( gui );
-	//scroll->setWidgetResizable( false );
 	scroll->show();
 
 	QObject::connect( gui, SIGNAL(genChanged(int)), wnd, SLOT(gensChanged(int)));
@@ -280,7 +287,8 @@ int main( int argc, char ** args ){
 	QObject::connect( wnd, SIGNAL(resetChanged()), gui, SLOT(resetChanged()));
 	QObject::connect( wnd, SIGNAL(operationChanged(int)), gui, SLOT(operationChanged(int)));
 
-	wnd->show();
+	if( showDialog )
+		wnd->show();
 
 	return app.exec();
 
