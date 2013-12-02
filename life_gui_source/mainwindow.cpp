@@ -31,6 +31,16 @@ void MainWindow::on_restartButton_clicked()
 
 void MainWindow::on_playButton_clicked()
 {
+
+	/*
+	 This code handles the starting and stopping of the automated generation progression on the display
+	 screen. When the button is pressed, the code will determine the correct value to emit to the displays
+	 delayChanged slot. If the progression is supposed to cease then the value of zero will be emitted.
+
+	 The text on the button is changed based on the state of the application and what functionality the 
+	 button serves.
+	 */
+
 	if( cts ){
 		ui->playButton->setText("Start");
 		emit delayChanged( 0 );

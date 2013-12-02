@@ -15,6 +15,14 @@
 
 #include "constants.h"
 
+/**
+ * The CustomException is used throughout the application to report an error occurring. For the sake of time, this one exception
+ * is composed of all the possible error conditions that the application reports. Ideally, a separate exception type should be
+ * created to handle each of these error conditions.
+ *
+ * @author Cameron Whipple
+ * @date December 1, 2013
+ */
 class CustomException : public std::exception {
 public:
 
@@ -43,9 +51,22 @@ public:
 
     CustomException(ErrorCode errorCode);
 
-    void ErrorMessage();
-
+    /**
+     * Obtain the ErrorCode from the exception. This ErrorCode is used to determine what type
+     * of error was encountered during the operation. These codes can be used with the printMessage
+     * function to provide textual description to the end user.
+     *
+     * @return ErrorCode that corresponds to the reason for the exception.
+     */
     ErrorCode getError();
+
+    /**
+     * Convert the provided ErrorCode into a human readable error message that is written to the specified file.
+     *
+     * @param ptr File to write the error contents to
+     * @param code The code to be converted to human readable format.
+     */
+    static void printMessage( FILE *ptr, ErrorCode code );
 
 private:
     ErrorCode code;

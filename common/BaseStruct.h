@@ -167,22 +167,39 @@ public:
      */
     void setColorMap( std::map< Grid::cell_state, Color> map );
 
+    /**
+     * Gets the map that is used to map the Colors to the states being used within
+     * the Grid for the simulations.
+     *
+     * @return Map of the cells states to their corresponding color.
+     */
     std::map< Grid::cell_state, Color> getColorMap(){
     	return colorMap;
 	}
 
     /**
-     * Updates teh map that handles the correlation between the Cell states and
+     * Updates the map that handles the correlation between the Cell states and
      * the associated Character codes.
      *
      * @param map The map between cell states and Character codes.
      */
     void setCharMap( std::map< Grid::cell_state, int > map );
 
+    /**
+     * Gets the Map that handles the correlation of the cells state to their corresponding character
+     * in the even that an ascii visualization is requested.
+     *
+     * @return Map of the cells states to their corresponding character.
+     */
 	std::map< Grid::cell_state, int > getCharMap(){
 		return charMap;
 	}
 
+    /**
+     * Gets the generation that the simulation is currently located at.
+     *
+     * @return Current generation of the simulation.
+     */
     int getGeneration(){
         return currentGeneration;
     }
@@ -209,14 +226,31 @@ public:
      */
     virtual BaseStruct* duplicate() = 0;
 
+    /**
+     * Gets the state that is deemed to be default for the underlying Life simulation.
+     *
+     * @return The state that is deemed to be the default state for the cells
+     */
 	virtual Grid::cell_state getDefaultState() = 0;
 
+    /**
+     * This function handles the progression of the simulation from generation N to N + numGenerations.
+     * If this function is overridden, the extending class should still call this super implementation
+     * within their overridden function. This will allow the super class to better handle the internal
+     * generation count.
+     *
+     * @param numGenerations Number of generations to progress the simulation forward by
+     * @param localTerrain The terrain to be used during the simulated generations.
+     */
     virtual void simulateGenerations( int numGenerations, grid_dimension localTerrain ){
         if( numGenerations >= 0 ){
             currentGeneration += numGenerations;
         }
     }
 
+    /**
+     * Resets the simulation back to it's state at generation 0.
+     */
     void resetSimulation(){
         data = start;
         currentGeneration = 0;

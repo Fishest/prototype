@@ -90,7 +90,26 @@ public:
      */
     Grid::cell_state getDefault();
 
+    /**
+     * This function handles the conversion of the string representation of the cell states to the actual
+     * cell_state enum. For instance, if "Dead" is seen in the file this function will map it to the 
+     * cell_state::DEAD enum and that will be returned.
+     *
+     * @param str The string that contains the cell state enum tag.
+     * @return The associated cell_state enum.
+     */
 	static Grid::cell_state convertState( std::string str );
+
+    /**
+     * This function will count the number of occurences of a particular state in the immediate
+     * vicinity of the specified point. The immediate vicinity refers to the 8 cells that surround
+     * the given point.
+     *
+     * @param grid The grid that contains the simulations current state.
+     * @param terrain The terrain to be used in the determination.
+     * @param pt The location in the grid to look around.
+     * @return The number of cells with the requested state.
+     */
 	static int countCells( Grid grid, cell_state state, grid_dimension terrain, Point pt );
 
 private:

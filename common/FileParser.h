@@ -34,7 +34,7 @@ public:
 
     /**
      * Grabs the next struct from the specified file. The next struct in the file is parsed
-     * and stored in a BaseStruct class.
+     * and a pointer to a BaseStruct is returned.
      *
      * @return Pointer to the BaseStruct that contains all the data from the file.
      */
@@ -120,8 +120,18 @@ private:
      *
      * @return Pointer to the LifeStruct on the heap that contains the information from the struct.
      */
-    BaseStruct* processLifeStruct();
+    //BaseStruct* processLifeStruct();
 
+     /**
+      * A configuration file could contain any number of different types of structs. This function is used
+      * to handle the parsing of those structs from within the file. A majority of the necessary functionality
+      * can be handled without needing to know the speific struct that was found. Operations such as
+      * file output, generation simulation and screen visualization can all be performed without the 
+      * need to know the specific underlying struct type. If necessary, it is possible to retrieve the
+      * underlying type through the use of the getType() function.
+      *
+      * @return Pointer to the BaseStruct on the heap that contains the information from the struct.
+      */
 	void processStruct( BaseStruct *base );
 
     /**

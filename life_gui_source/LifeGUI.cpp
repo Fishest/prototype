@@ -4,6 +4,7 @@
 #include "../common/Point.h"
 #include "../common/constants.h"
 #include "../common/Grid.h"
+#include "../common/CustomException.h"
 
 LifeGUI::LifeGUI( QWidget *parent ) : QWidget( parent ){
 	setAttribute( Qt::WA_StaticContents );
@@ -31,18 +32,25 @@ void LifeGUI::updateImageSize(){
 		return;
 	}
 
+	/*
+
+	The code in this function is going about determining the necessary size for being able to display
+	the grid with the pixels and window that was chosen. If the screen is too large, scroll bars will 
+	be added automatically so this function doesn't need to worry about the size of the bounding window.
+
+	*/
+
 	numElementsWidth = current->getWindow().xVals.getSecond() - current->getWindow().xVals.getFirst() + 1;
 	numElementsHeight = current->getWindow().yVals.getSecond() - current->getWindow().yVals.getFirst() + 1;
 
 	pixelWidth = numElementsWidth * pixels;
 	pixelHeight = numElementsHeight * pixels;
 
+	//Alters the width and height to account for the grid lines if the pixel size is large enough.
 	if( pixels >= 4 ){
 		pixelWidth += ( numElementsWidth - 1 );
 		pixelHeight += ( numElementsHeight - 1 );
 	}
-
-	//image = QImage( pixelWidth, pixelHeight, QImage::Format_ARGB32 );
 }
 
 //Tells the QT what size the widge should be
@@ -54,6 +62,14 @@ QSize LifeGUI::sizeHint() const{
 }
 
 void LifeGUI::mousePressEvent( QMouseEvent *event ){
+
+	/*
+
+	The code below will progress the simulation by a generation when the mouse is clicked inside
+	the displays bounds.
+
+	*/
+
 	this->simulateGen( 1 );
 	updateImageSize();
 	update();
@@ -75,6 +91,7 @@ void LifeGUI::paintEvent( QPaintEvent *event ){
 
 	QPainter painter( this );
 
+	//Changes the size of the canvas that the Grid is being drawn on.
 	this->setFixedHeight( pixelHeight );
 	this->setFixedWidth( pixelWidth );
 
@@ -164,31 +181,62 @@ void LifeGUI::simulateGen(){
 
 void LifeGUI::simulateGen( int value ){
 
-	
-	current->simulateGenerations( value, current->getTerrain() );
-	emit genChanged( current->getGeneration() );
+	if( value < 0 ){
+		fprintf( stderr, "Invalid generation value provided. No changes made.\n");
+		return;
+	}
 
-	updateImageSize();
-	update();
-	updateGeometry();
+	try{
 
-	if( timer != NULL && timer->isActive() )
-		timer->stop();
-	if( delay > 0 ){
+		/*
+			Runs the simulation through the specified number of generations using the terrain that
+			has previously been associated with the simulation.
 
-		if( timer != NULL ){
-			delete timer;
-			timer = NULL;
+			*/
+		current->simulateGenerations( value, current->getTerrain() );
+		emit genChanged( current->getGeneration() );
+
+		updateImageSize();
+		update();
+		updateGeometry();
+
+
+		/*
+
+		This code handles the configuration of the timer element. The timer is used to register for a generation
+		update after the specified amount of time. In this case, the amount of time is controlled by the last
+		received delay amount from the slot. This is typically controlled by the control window that has the 
+		delay spin box on the screen.
+
+		*/
+		if( timer != NULL && timer->isActive() )
+			timer->stop();
+		if( delay > 0 ){
+
+			if( timer != NULL ){
+				delete timer;
+				timer = NULL;
+			}
+
+			//Creates the new timer object and sets it up to call the simulateGen slot after the 
+			//specified number of seconds. The timer is expecting milliseconds and thus the provided
+			//delay value must be multiplied by 1000 to make it into seconds.
+			timer = new QTimer(this);
+			connect( timer, SIGNAL(timeout()), this, SLOT(simulateGen()));
+			timer->start( delay * 1000 );
 		}
 
-		timer = new QTimer(this);
-		connect( timer, SIGNAL(timeout()), this, SLOT(simulateGen()));
-		timer->start( delay * 1000 );
+	}catch ( CustomException a ){
+		CustomException::printMessage( stderr, a.getError() );
+		return;
 	}
 	
 }
 
 void LifeGUI::resetChanged(){
+
+	//Resets the Grid back to generation 0 and then notifies all listeners of the change
+	//in the current generation by emitting a corresponding signal.
 	current->resetSimulation();
 	emit genChanged( current->getGeneration() );
 
@@ -196,9 +244,3 @@ void LifeGUI::resetChanged(){
 	update();
 	updateGeometry();
 }
-
-void LifeGUI::operationChanged( int value ){
-	//This will need to switch between the pause or constant flowing
-	//visualization
-}
-
