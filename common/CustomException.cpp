@@ -47,6 +47,15 @@ void CustomException::printMessage( FILE *ptr, ErrorCode code ){
 		fprintf( ptr, "Negative value provided for generations. Please specify proper value.\n");
 	else if( code == INVALID_CHAR )
 		fprintf( ptr, "Invalid character value provided in the given file. Supported values are 0-255.\n");
-
+	else if( code == INVALID_STRUCT_TYPE )
+		fprintf( ptr, "Unsupported struct type was found in the provided configuration file.\n");
+	else if( code == INVALID_TYPE_FOR_SIMULATION )
+		fprintf( ptr, "A not compatible struct was provided to the Elementary rule set. Please make sure that proper configuration file provided.\n");
+	else if( code == INVALID_RULE_VALUE )
+		fprintf( ptr, "An invalid value was provided for the Elementary structs rule argument. The value must be between 0 and 255.\n");
+	else if( code == INVALID_TERRAIN_STRUCT )
+		fpritnf( ptr, "Terrain struct provided in the configuration file is not properly formatted.\n");
+	else if( code == NOT_IMPLEMENTED_YET )
+		fprintf( ptr, "You've come across a feature that is currently in progress of being developed. I apologize for the inconvenience.\n");
 
 }
