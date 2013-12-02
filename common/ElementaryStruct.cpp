@@ -98,17 +98,17 @@ void ElementaryStruct::simulateGenerations( int numGenerations, grid_dimension l
 	BaseStruct::simulateGenerations( numGenerations, localTerrain );
 
 	if( numGenerations < 0 ){
-		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
+		throw CustomException( CustomException::NEGATIVE_GENERATIONS );
 	}
 	Grid current = data;
 	Grid past = data;
 
 	if( this->getType() != BaseStruct::ELEMENTARY ){
-		throw new CustomException( CustomException::INVALID_TYPE_FOR_SIMULATION );
+		throw CustomException( CustomException::INVALID_TYPE_FOR_SIMULATION );
 	}
 
 	if( rule < 0 || rule >= 512 ){
-		throw new CustomException( CustomException::INVALID_RULE_VALUE );
+		throw CustomException( CustomException::INVALID_RULE_VALUE );
 	}
 
 	/*

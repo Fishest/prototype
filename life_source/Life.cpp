@@ -204,7 +204,7 @@ int main( int argc, char **args ){
 		}
 
 	}catch( CustomException a ){
-		CustomException::printMessage( stderr, a.getCode() );
+		CustomException::printMessage( stderr, a.getError() );
 		return 0;
 	}
 
@@ -246,7 +246,7 @@ int main( int argc, char **args ){
 		 }
 
 	} catch( CustomException a ){
-		CustomException::printMessage( stderr, a.getCode() );
+		CustomException::printMessage( stderr, a.getError() );
 		delete base;
 		return 0;
 	}
@@ -272,7 +272,7 @@ int main( int argc, char **args ){
 	 }
 
 	} catch( CustomException a ){
-		CustomException::printMessage( stderr, a.getCode() );
+		CustomException::printMessage( stderr, a.getError() );
 		delete base;
 		return 0;
 	}

@@ -24,7 +24,7 @@ FileParser::FileParser( std::string filename ){
     
     input = fopen( filename.c_str(), "r");
     if( input == NULL ){
-        throw new CustomException( CustomException::INVALID_FILENAME );
+        throw CustomException( CustomException::INVALID_FILENAME );
     }
     state = FileParser::NOTHING;    
 	defaultState = Grid::UNKNOWN;
@@ -54,7 +54,7 @@ BaseStruct* FileParser::getNext(){
 		return temp;
     }
     else{
-        throw new CustomException( CustomException::NO_NEXT_STRUCT );
+        throw CustomException( CustomException::NO_NEXT_STRUCT );
     }  
 }
 
@@ -125,7 +125,7 @@ Point FileParser::parseDotRange( std::string content ){
         values.setFirst( atoi( ptr ) );
     }
     else{
-        throw new CustomException( CustomException::INVALID_RANGE );
+        throw CustomException( CustomException::INVALID_RANGE );
     }
     
     ptr = strtok( NULL, "..");
@@ -133,11 +133,11 @@ Point FileParser::parseDotRange( std::string content ){
         values.setSecond( atoi( ptr ) );
     }
     else{
-        throw new CustomException( CustomException::INVALID_RANGE );
+        throw CustomException( CustomException::INVALID_RANGE );
     }
     
     if( values.getSecond() < values.getFirst() ){
-        throw new CustomException( CustomException::INVALID_RANGE );
+        throw CustomException( CustomException::INVALID_RANGE );
     }
     
     return values;    
@@ -188,7 +188,7 @@ Token FileParser::getNextToken( char *delim, int length ){
         if( result <= 0 ){
             
             if( feof( input ) ){
-                throw new CustomException( CustomException::PREMATURE_EOF );
+                throw CustomException( CustomException::PREMATURE_EOF );
             }
             else if( ferror( input ) ){
                 
@@ -238,7 +238,7 @@ Token FileParser::getNextToken( char *delim, int length ){
     } //Ends while loop
      
     if( index >= bufferSize ){
-        throw new CustomException( CustomException::NOT_ENOUGH_BUFFER_FOR_TOKEN );
+        throw CustomException( CustomException::NOT_ENOUGH_BUFFER_FOR_TOKEN );
     }
     
     //Time to build string that will be returned.
@@ -275,7 +275,7 @@ Token FileParser::getNextTokenIgnoreParen( char *delim, int length){
         if( result <= 0 ){
             
             if( feof( input ) ){
-                throw new CustomException( CustomException::PREMATURE_EOF );
+                throw CustomException( CustomException::PREMATURE_EOF );
             }
             else if( ferror( input ) ){
                 
@@ -327,7 +327,7 @@ Token FileParser::getNextTokenIgnoreParen( char *delim, int length){
     } //Ends while loop
      
     if( index >= bufferSize ){
-        throw new CustomException( CustomException::NOT_ENOUGH_BUFFER_FOR_TOKEN );
+        throw CustomException( CustomException::NOT_ENOUGH_BUFFER_FOR_TOKEN );
     }
     
     //Time to build string that will be returned.
@@ -366,7 +366,7 @@ Color FileParser::parseColor(std::string content){
                 
                 int temp = atoi( buffer );
                 if( temp < 0 || temp > 255 ){
-                    throw new CustomException( CustomException::INVALID_COLOR );
+                    throw CustomException( CustomException::INVALID_COLOR );
                 }
                 
                 if( state == 0 ){
@@ -395,14 +395,14 @@ Color FileParser::parseColor(std::string content){
     } //Ends while loop
     
     if( index >= content.size() || insertIndex >= content.size() ){
-        throw new CustomException( CustomException::INVALID_COLOR );
+        throw CustomException( CustomException::INVALID_COLOR );
     }
     
     /*
      * Make sure that a valid value was found for each of the colors in string.
      */
     if( red < 0 || green < 0 || blue < 0 )
-        throw new CustomException( CustomException::INVALID_COLOR );
+        throw CustomException( CustomException::INVALID_COLOR );
     
     //Returns a copy of the representative Color object
     Color temp( red, green, blue);
@@ -466,11 +466,11 @@ Point FileParser::parsePoint(std::string content){
     } //Ends while loop
     
     if( index >= content.size() || insertIndex >= content.size() ){
-        throw new CustomException( CustomException::INVALID_POINT );
+        throw CustomException( CustomException::INVALID_POINT );
     }
     
     if( val1Found == false || val2Found == false )
-        throw new CustomException( CustomException::INVALID_POINT );
+        throw CustomException( CustomException::INVALID_POINT );
     
     Point temp( val1, val2);
     
@@ -494,7 +494,7 @@ void FileParser::skipToNextLine(){
                 return;
             }
             else if( ferror( input ) ){
-                throw new CustomException( CustomException::INVALID_FILE );
+                throw CustomException( CustomException::INVALID_FILE );
             }
         }
         
@@ -574,7 +574,7 @@ grid_dimension FileParser::processTerrain(){
         if( state == 1 && tok.getMatachedDelim() == '=' ){
             //Two headers in a row have been found in the provided file. This isn't valid
             //and thus needs to be reported.
-            throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+            throw CustomException( CustomException::INVALID_TERRAIN_STRUCT );
         }
         else if( state == 0 && tok.getMatachedDelim() == '='){
             //A header was found.
@@ -583,17 +583,17 @@ grid_dimension FileParser::processTerrain(){
 			if( tok.getContent().find( "Xrange" ) != tok.getContent().npos ){
 				processingX = true;
 				if( xFound )
-					throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+					throw CustomException( CustomException::INVALID_TERRAIN_STRUCT );
 				xFound = true;
 			}
 			else if( tok.getContent().find( "Yrange" ) != tok.getContent().npos ){
 				processingX = false;
 				if( yFound )
-					throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+					throw CustomException( CustomException::INVALID_TERRAIN_STRUCT );
 				yFound = true;
 			}
 			else{
-				throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+				throw CustomException( CustomException::INVALID_TERRAIN_STRUCT );
 			}
 
         }
@@ -622,7 +622,7 @@ grid_dimension FileParser::processTerrain(){
     tok = getNextToken(";", 1);
 
 	if( !xFound || !yFound )
-		throw new CustomException( CustomException::INVALID_TERRAIN_STRUCT );
+		throw CustomException( CustomException::INVALID_TERRAIN_STRUCT );
     
     return grid;
 }
@@ -703,12 +703,12 @@ void FileParser::processStruct( BaseStruct *base ){
 				tok = getNextToken( ";", 1 );
 				int value = atoi( tok.getContent().c_str() );
 				if( value < 0 || value >= 512 ){
-					throw new CustomException( CustomException::INVALID_RULE_VALUE );
+					throw CustomException( CustomException::INVALID_RULE_VALUE );
 				}
 
 				if( base->getType() != BaseStruct::ELEMENTARY )
 				{
-					throw new CustomException( CustomException::INVALID_STRUCT_TYPE );
+					throw CustomException( CustomException::INVALID_STRUCT_TYPE );
 				}
 
 				ElementaryStruct * el = (ElementaryStruct*) base;
@@ -732,7 +732,7 @@ void FileParser::processStruct( BaseStruct *base ){
 	   Make sure that all the required sections have been defined.
 	   */
     if( !terrainDefined || !charsDefined || !colorsDefined ){
-        throw new CustomException( CustomException::INVALID_FILE );
+        throw CustomException( CustomException::INVALID_FILE );
     }
     
     //Get rid of trailing semi-colon
@@ -779,7 +779,7 @@ std::map< Grid::cell_state, int> FileParser::processChars(){
             //Add the newly found state to the mapping
             int ch = atoi( worker.getContent().c_str() );
 			if( ch < 0 || ch >= 256 )
-				throw new CustomException( CustomException::INVALID_CHAR );
+				throw CustomException( CustomException::INVALID_CHAR );
 
 			//Adds the new character code into the mapping
 			chars.insert( std::pair< Grid::cell_state, int>( foundState, ch) );
@@ -808,7 +808,7 @@ std::map< Grid::cell_state, Color> FileParser::processColors(){
         if( state == 1 && tok.getMatachedDelim() == '=' ){
             //Two headers in a row have been found in the provided file. This isn't valid
             //and thus needs to be reported.
-            throw new CustomException( CustomException::INVALID_COLOR_STRUCT );
+            throw CustomException( CustomException::INVALID_COLOR_STRUCT );
         }
         else if( state == 0 && tok.getMatachedDelim() == '='){
             //A header was found.

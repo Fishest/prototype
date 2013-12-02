@@ -96,7 +96,7 @@ void LifeStruct::simulateGenerations( int numGenerations, grid_dimension localTe
 	Grid past = data;
 
 	if( numGenerations < 0 ){
-		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
+		throw CustomException( CustomException::NEGATIVE_GENERATIONS );
 	}
 
 	int currentGen = 0;

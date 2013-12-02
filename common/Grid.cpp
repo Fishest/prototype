@@ -67,7 +67,7 @@ Grid::cell_state Grid::convertState( string content ){
 		return Grid::ONE;
 	}
 	else{
-		throw new CustomException( CustomException::INVALID_FILE );
+		throw CustomException( CustomException::INVALID_FILE );
 	}
 }
 

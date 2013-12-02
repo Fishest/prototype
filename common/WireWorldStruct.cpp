@@ -117,7 +117,7 @@ void WireWorldStruct::simulateGenerations( int numGenerations, grid_dimension lo
 	BaseStruct::simulateGenerations( numGenerations, localTerrain );
 
 	if( numGenerations < 0 ){
-		throw new CustomException( CustomException::NEGATIVE_GENERATIONS );
+		throw CustomException( CustomException::NEGATIVE_GENERATIONS );
 	}
 
 	Grid current = data;

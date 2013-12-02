@@ -45,7 +45,7 @@ void printHelpMessage(){
 	fprintf( stderr, "-ty l..h : Specify the Y values of the terrain, will override content from file.\n");
 	fprintf( stderr, "-wx : Controls the width of the cells that are displayed on the screen.\n");
 	fprintf( stderr, "-wy : Controls the height of the cells that are displayed on the screen.\n");
-	fprintf( stderr, "-c : Displays a control window for adjusting the simuations operation.\n\n\n")
+	fprintf( stderr, "-c : Displays a control window for adjusting the simuations operation.\n\n\n");
 
 	return;
 }
@@ -224,7 +224,7 @@ int main( int argc, char ** args ){
 		}
 
 	}catch( CustomException a ){
-		CustomException::printMessage( stderr, a.getCode() );
+		CustomException::printMessage( stderr, a.getError() );
 		return 0;
 	}
 
@@ -264,7 +264,7 @@ int main( int argc, char ** args ){
 		 	base->setWindow( dimen );
 		}
 	} catch( CustomException a ){
-		CustomException::printMessage( stderr, a.getCode() );
+		CustomException::printMessage( stderr, a.getError() );
 		return 0;
 	}
 

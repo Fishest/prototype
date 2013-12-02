@@ -54,7 +54,7 @@ int BaseStruct::getChar(Grid::cell_state value){
     }
     else{
         //Mapping was not able to be found for the state
-        throw new CustomException( CustomException::INVALID_MAPPING );
+        throw CustomException( CustomException::INVALID_MAPPING );
     }
 }
 
@@ -70,7 +70,7 @@ Color BaseStruct::getColor(Grid::cell_state value){
         return it->second;
     else
 		//No mapping was available.
-        throw new CustomException( CustomException::INVALID_MAPPING );
+        throw CustomException( CustomException::INVALID_MAPPING );
 }
 
 Grid BaseStruct::getGrid(){
