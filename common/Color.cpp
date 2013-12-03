@@ -7,6 +7,7 @@ Color::Color(){
     greenValue = 0;
     blueValue = 0;
 }
+
 Color::Color(int red, int green, int blue){
     redValue = red;
     greenValue = green;

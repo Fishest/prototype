@@ -54,7 +54,7 @@ void CustomException::printMessage( FILE *ptr, ErrorCode code ){
 	else if( code == INVALID_RULE_VALUE )
 		fprintf( ptr, "An invalid value was provided for the Elementary structs rule argument. The value must be between 0 and 255.\n");
 	else if( code == INVALID_TERRAIN_STRUCT )
-		fpritnf( ptr, "Terrain struct provided in the configuration file is not properly formatted.\n");
+		fprintf( ptr, "Terrain struct provided in the configuration file is not properly formatted.\n");
 	else if( code == NOT_IMPLEMENTED_YET )
 		fprintf( ptr, "You've come across a feature that is currently in progress of being developed. I apologize for the inconvenience.\n");
 
