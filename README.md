@@ -2,7 +2,7 @@ Game of Life Simulations
 ------------------------------------------------------------
 The Game of a Life is a simulation of bacterial growth and death rates
 that was developed in the 1970's by Mr. Conway. Primarily, the program
-consists of a Grid of cells that each have a state of Dead or Alive.
+consists of a Grid of cells that each have a state such as Dead or Alive.
 Based on a set of rules, defined in part1.pdf, the cells in the next
 generation may change their state. Thus a cell that is Alive in Generation
 N could die off in Generation N+1 for a variety of reasons.
@@ -21,12 +21,14 @@ to export a given generations state into a configuration file. This config file
 can then be imported into the programs as well. Please see the applications help
 screen for more details "./life -h".
 
-The second application, life_gui, supports visualizing the a Grid ayout through
+The second application, life_gui, supports visualizing of the Grid layout through
 the creation of a user interface. The interface is built around the QT framework
-and thus should would on any platform. The QT version allows for customizing the
+and thus should work on any platform. The QT version allows for customizing the
 Color of the different cells as well as the size of the different cells. This
 application supports many of the same feature as life and also has a help screen
-in which more informaiton can be found "./life_gui -h".
+in which more informaiton can be found "./life_gui -h". One feature that may be
+particularly useful is the -c option. This option will open up a control dialog
+window that can be used to control how the simulations progress.
 
 Technical Breakdown
 --------------------------------------------------------------------
@@ -37,10 +39,10 @@ to run into memory issues when processing extremely large, but sparsely populate
 grids. I also wanted to make sure that I designed all the peices in such a
 way that they could be easily extended in the future when the need arose.
 
-The code based is broke down into several smaller components that are designed
-to work with each other to implement the functionality. The clas that is responsible
+The code base is broke down into several smaller components that are designed
+to work with each other to implement the functionality. The class that is responsible
 for all the processing of the input files is the FileParser. The FileParser uses
-a system of finite states machines and a custom tokenizer to succesifully parse the 
+a system of finite state machines and a custom tokenizer to successfully parse the 
 given files. The custom tokenizer is able to pull content from a file while ignoring
 any extra white space as well as commented lines. Thus, the overall parsing of the 
 function is made much simpler as the majority of the code won't ever see any whitespace
@@ -74,11 +76,13 @@ the need for code duplication nonexistent within the application. It also make o
 exporting content to a file easier since each of the more specific structs will implement the
 code that is specific to them. From a high level, the application is provided a BaseStruct pointer
 and all it needs to do is call export(FILE) and the file will be generated regardless of the underlying
-struct type. You will also see this concept of inheritance in place with the rule sets. the iRuleSet.h
-defines a entirely virtual class that is able to be extended. As part of inheriting from this class, 
-a function must be implemented to is able to progress a Grid from Generation N to Generation N+1.
-Setting up the application such as this make it super easy to define custom RuleSets within the 
-application as well as being able up with RuleSets could be used against with Struct types.
+struct type. You will also see this concept of inheritance in place with how the future generations are
+are simulated within the application. The BaseStruct class provides a very basic implementation of simulateGen
+function which will handle the progression from generation N to generation N+1. Each of the more
+specific struct types then extend the functionality of this function to adjust the internal grid
+as necessary to move the struct to the next generation. Because the virtual functions are being used the 
+life and life_gui applications don't need to know the underlying struct type in order to progress the
+struct forward a few generations.
 
 The majority of the code is house within the common directory. This will contain all the code responsible for 
 processing the input files and calculating the next generation content. There are some self-explanatory
